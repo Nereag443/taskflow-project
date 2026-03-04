@@ -8,13 +8,6 @@
   
 }
 
-html, body {
-  margin: 0;
-  padding: 0;
-  width: 100%;
-  overflow-x: hidden;
-}
-
 body {
   display: flex;
   flex-direction: column;
@@ -28,7 +21,7 @@ body {
   --text-color: #f9fafb;
 } */
 
-header {
+body > header {
   margin-left: 10px;
   border-radius: 8px;
   background-color: var(--primary-color);
@@ -52,6 +45,7 @@ aside {
 aside ul {
   list-style: none;
   margin-top: var(--spacing);
+  padding-left: 0;
 }
 
 aside li {
@@ -150,22 +144,23 @@ main {
 
 }
 
-.profile {
-  align-items: center;
+input[type="text"] {
+  flex: 1;
+  padding: 10px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+      outline: none;
+      transition: 0.3s;
 }
 
-.profile-p {
-    display: flex;
-    justify-content: center; 
-    align-items: center;    
-    height: 100vh;          
-}
-
-.circle {
-    width: 100px;            
-    height: 100px;           
-    background-color: #3498db; 
-    border-radius: 50%;      
+button[type="submit"] {
+  padding: 10px 15px;
+      border: none;
+      border-radius: 8px;
+      background: rgb(250, 208, 208);
+      color: rgb(0, 0, 0);
+      cursor: pointer;
+      transition: 0.3s;
 }
 
 @media (max-width: 768px) {
