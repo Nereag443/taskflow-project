@@ -1,6 +1,6 @@
 :root {
-  --primary-color: rgb(250, 208, 208);
-  --background-color: rgb(136, 102, 102);
+  --primary-color: rgba(219, 162, 162, 0.274);
+  --background-color: rgb(255, 255, 255);
   --font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
   --spacing: 10px;
   --spacing-medium: 20px;
@@ -102,6 +102,11 @@ main {
   padding:var(--spacing-large);
 }
 
+#tareas h2 {
+  font-size: 25x;
+  font-weight: 700;
+}
+
 .task-card {
   display: flex;
   align-items: center;
@@ -134,7 +139,7 @@ main {
   width: 25px;
   height: 25px;
   margin-left: auto;
-  background: rgb(160, 37, 62);
+  background: rgb(202, 159, 168);
   color: white;
   border: none;
   border-radius: 4px;
@@ -157,7 +162,7 @@ button[type="submit"] {
   padding: 10px 15px;
       border: none;
       border-radius: 8px;
-      background: rgb(250, 208, 208);
+      background: rgb(202, 159, 168);
       color: rgb(0, 0, 0);
       cursor: pointer;
       transition: 0.3s;
