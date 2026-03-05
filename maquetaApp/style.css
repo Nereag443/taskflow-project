@@ -5,7 +5,6 @@
   --spacing: 10px;
   --spacing-medium: 20px;
   --spacing-large: 30px;
-  
 }
 
 body {
@@ -31,7 +30,7 @@ body > header {
 
 header h1 {
   font-size: 2rem;
-  font-weight:600;
+  font-weight: 600;
 }
 
 aside {
@@ -56,7 +55,7 @@ aside li {
   cursor: pointer;
 }
 
-aside li a{
+aside li a {
   text-decoration: none;
   color: black;
   display: block;
@@ -106,7 +105,7 @@ main {
 .main-section {
   width: 100%;
   margin: var(--spacing);
-  padding:var(--spacing-large);
+  padding: var(--spacing-large);
 }
 
 #tareas h2 {
@@ -122,14 +121,16 @@ main {
   padding: var(--spacing-medium);
   margin-bottom: var(--spacing);
   background-color: var(--primary-color);
-  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
 
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
 }
 
 .task-card:hover {
   transform: translateY(-3px);
-  box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
 }
 
 .task-card header {
@@ -153,26 +154,25 @@ main {
   cursor: pointer;
   font-weight: bold;
   transition: 0.2s;
-
 }
 
 input[type="text"] {
   flex: 1;
   padding: 10px;
-      border-radius: 8px;
-      border: 1px solid #ccc;
-      outline: none;
-      transition: 0.3s;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  outline: none;
+  transition: 0.3s;
 }
 
 button[type="submit"] {
   padding: 10px 15px;
-      border: none;
-      border-radius: 8px;
-      background: rgb(202, 159, 168);
-      color: rgb(0, 0, 0);
-      cursor: pointer;
-      transition: 0.3s;
+  border: none;
+  border-radius: 8px;
+  background: rgb(202, 159, 168);
+  color: rgb(0, 0, 0);
+  cursor: pointer;
+  transition: 0.3s;
 }
 
 @media (max-width: 768px) {
@@ -189,7 +189,7 @@ button[type="submit"] {
     box-sizing: border-box;
   }
 
-  .main-section{
+  .main-section {
     margin: 0;
     width: 100%;
     padding: var(--spacing);
