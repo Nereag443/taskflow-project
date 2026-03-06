@@ -92,7 +92,7 @@ if (localStorage.getItem("theme") === "dark") {
 darkMode.addEventListener("click", () =>{
   document.documentElement.classList.toggle("dark");
   if (document.documentElement.classList.contains("dark")) {
-    darkMode.textContent = "🌞";
+    darkMode.textContent = "☀️";
     localStorage.setItem("theme", "dark");
   } else {
     darkMode.textContent = "🌙";
