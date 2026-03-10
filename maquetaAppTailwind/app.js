@@ -79,23 +79,24 @@ function findTask(){
 }
 
 
-const darkMode = document.getElementById("darkModeButton");
+// ----- Modo oscuro -----
 
-if (localStorage.getItem("theme") === "dark") {
-  document.documentElement.classList.add("dark");
-  darkMode.textContent = "🌞";
-} else {
-  document.documentElement.classList.remove("dark");
-  darkMode.textContent = "🌙";
-}
+const applyInitialTheme = () => {
+  const storedTheme = localStorage.getItem("theme");
+  const isDark = storedTheme === "dark";
 
-darkMode.addEventListener("click", () =>{
-  document.documentElement.classList.toggle("dark");
-  if (document.documentElement.classList.contains("dark")) {
-    darkMode.textContent = "☀️";
-    localStorage.setItem("theme", "dark");
-  } else {
-    darkMode.textContent = "🌙";
-    localStorage.setItem("theme", "light");
-  }
-});
+  document.documentElement.classList.toggle("dark", isDark);
+  darkModeButton.textContent = isDark ? "🌞" : "🌙";
+};
+
+const toggleTheme = () => {
+  const html = document.documentElement;
+  const isDark = !html.classList.contains("dark");
+
+  html.classList.toggle("dark", isDark);
+  darkModeButton.textContent = isDark ? "☀️" : "🌙";
+  localStorage.setItem("theme", isDark ? "dark" : "light");
+};
+
+applyInitialTheme();
+darkModeButton.addEventListener("click", toggleTheme);
