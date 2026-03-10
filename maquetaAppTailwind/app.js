@@ -1,101 +1,112 @@
 const taskBlock = document.getElementById("task-block");
 const taskInput = document.getElementById("task-text");
-const addTask = document.getElementById("add-task-button");
+const addTaskButton = document.getElementById("add-task-button");
 const finderText = document.getElementById("finder-text");
-const finderButton =document.getElementById("search-task");
+const finderButton = document.getElementById("search-task");
+const darkModeButton = document.getElementById("darkModeButton");
 
 let tasks = JSON.parse(localStorage.getItem("tasks")) || [];
 
-function render() {
-  taskBlock.innerHTML = "";
+// ----- Gestión de tareas -----
 
-  tasks.forEach((task, index) => {
-    taskBlock.innerHTML += `
-      <section class="task-card flex items-center gap-3 rounded-lg p-8 mb-3 bg-rose-200 bg-opacity-40 shadow-md transition hover:-translate-y-1 hover:shadow-lg ${task.completed ? "opacity-50 line-through" : ""}">
-        <header class="flex flex-col">
-          <h3 class="text-base font-medium">${task.text}</h3>
-        </header>
-        <button class="delete-button ml-auto w-6 h-6 bg-rose-400 text-white rounded hover:bg-rose-500 transition" data-index="${index}">&times;
-        </button>
-      </section>
-    `;
-  });
-}
+const createTaskCardHTML = (task, index) => `
+  <section class="task-card flex items-center gap-3 rounded-lg p-8 mb-3 bg-rose-200 bg-opacity-40 shadow-md transition hover:-translate-y-1 hover:shadow-lg ${task.completed ? "opacity-50 line-through" : ""}">
+    <header class="flex flex-col">
+      <h3 class="text-base font-medium">${task.text}</h3>
+    </header>
+    <button
+      class="delete-button ml-auto w-6 h-6 bg-rose-400 text-white rounded hover:bg-rose-500 transition"
+      data-index="${index}"
+    >
+      &times;
+    </button>
+  </section>
+`;
 
-//Convierte array tasks a texto y lo guarda en el localStorage
-function saveTasks() {
+const renderTasks = () => {
+  taskBlock.innerHTML = tasks.map(createTaskCardHTML).join("");
+};
+
+// Convierte el array tasks a texto y lo guarda en localStorage
+const saveTasks = () => {
   localStorage.setItem("tasks", JSON.stringify(tasks));
-}
-function saveAndRender() {
-  saveTasks();
-  render();
-}
+};
 
-addTask.addEventListener("click", () => { 
+const saveAndRender = () => {
+  saveTasks();
+  renderTasks();
+};
+
+const handleAddTask = () => {
   const inputText = taskInput.value.trim();
   if (!inputText) return;
-  tasks.push({text: inputText, completed: false});
+
+  tasks.push({ text: inputText, completed: false });
   taskInput.value = "";
+  saveAndRender();
+};
+
+// Añadir tareas con botón
+addTaskButton.addEventListener("click", handleAddTask);
+
+// Añadir tareas con Enter
+taskInput.addEventListener("keydown", (event) => {
+  if (event.key === "Enter") {
+    handleAddTask();
+  }
+});
+
+// Eliminar tareas
+taskBlock.addEventListener("click", (event) => {
+  if (!event.target.classList.contains("delete-button")) return;
+
+  const index = Number(event.target.dataset.index);
+  tasks.splice(index, 1);
   saveAndRender();
 });
 
-// Añadir tareas con enter
-taskInput.addEventListener("keydown", (e) => {
-  if (e.key === "Enter") {
-    addTask.click();
-  }
-});
-taskBlock.addEventListener("change", (e) => {
-  if (e.target.classList.contains("check")) {
-    const index = Number(e.target.dataset.index);
-    tasks[index].completed = e.target.checked;
-    saveAndRender();
-  }
-});
+renderTasks();
 
-taskBlock.addEventListener("click", (e) => {
-  if (e.target.classList.contains("delete-button")) {
-    const index = Number(e.target.dataset.index);
-    tasks.splice(index, 1);
-    saveAndRender();
-  }
-});
+// ----- Búsqueda / filtro de tareas -----
 
-render();
+const filterTasks = (text) => {
+  const normalizedText = text.trim().toLowerCase();
+  const taskCards = document.querySelectorAll(".task-card");
 
-finderButton.addEventListener("click", findTask);
-finderText.addEventListener("input", findTask);
-function findTask(){
-  const text=finderText.value.toLowerCase();
-  const taskCards=document.querySelectorAll(".task-card");
+  taskCards.forEach((card) => {
+    const taskText = card
+      .querySelector("h3")
+      .textContent.toLowerCase();
 
-  taskCards.forEach(card => {const taskText =card.querySelector("h3").textContent.toLowerCase();
-    if(taskText.includes(text)) {
-      card.style.display="";
-    }else {
-      card.style.display="none"
-    }
-  })
-}
+    card.style.display = taskText.includes(normalizedText) ? "" : "none";
+  });
+};
 
+const handleFilterChange = () => {
+  filterTasks(finderText.value);
+};
 
-const darkMode = document.getElementById("darkModeButton");
+finderButton.addEventListener("click", handleFilterChange);
+finderText.addEventListener("input", handleFilterChange);
 
-if (localStorage.getItem("theme") === "dark") {
-  document.documentElement.classList.add("dark");
-  darkMode.textContent = "🌞";
-} else {
-  document.documentElement.classList.remove("dark");
-  darkMode.textContent = "🌙";
-}
+// ----- Modo oscuro -----
 
-darkMode.addEventListener("click", () =>{
-  document.documentElement.classList.toggle("dark");
-  if (document.documentElement.classList.contains("dark")) {
-    darkMode.textContent = "☀️";
-    localStorage.setItem("theme", "dark");
-  } else {
-    darkMode.textContent = "🌙";
-    localStorage.setItem("theme", "light");
-  }
-});
+const applyInitialTheme = () => {
+  const storedTheme = localStorage.getItem("theme");
+  const isDark = storedTheme === "dark";
+
+  document.documentElement.classList.toggle("dark", isDark);
+  darkModeButton.textContent = isDark ? "🌞" : "🌙";
+};
+
+const toggleTheme = () => {
+  const html = document.documentElement;
+  const isDark = !html.classList.contains("dark");
+
+  html.classList.toggle("dark", isDark);
+  darkModeButton.textContent = isDark ? "☀️" : "🌙";
+  localStorage.setItem("theme", isDark ? "dark" : "light");
+};
+
+applyInitialTheme();
+darkModeButton.addEventListener("click", toggleTheme);
