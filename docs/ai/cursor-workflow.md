@@ -66,3 +66,14 @@ darkModeButton.addEventListener("click", () => {
   const isDarkActive = document.documentElement.classList.contains("dark");
   setDarkMode(!isDarkActive);
 });
+
+
+###¿Qué es el Model Context Protocol?
+
+Model context Protocol: es un estandar abierto que permite la conexión segura entre agentes de IA y herramientas externas, bases de datos, aplicaciones, entre otros.
+
+Para poder instalar MCP en cursor usaré el MCP de Github, para ello hay que entrar a la documentación de la página de Cursor y añadir el MCP a Cursor.
+Para poder instalarlo es necesario un token de Github, además de tener instalado Docker.
+Una vez creado el token se pega en Cursor y se instala el MCP.
+
+MCP puede ser muy útil para comprobar el estado de los repositorios remotos o buscar código en los mismos, pudiendo detectar errores o mejoras, o generar documentos, facilitando tareas que, de otra manera serían repetitivos. Además de que los MCP pueden conectarse con bases de datos por lo que se podrían realizar consultas sin salir de Cursor y agilizar todo este tipo de procesos.
