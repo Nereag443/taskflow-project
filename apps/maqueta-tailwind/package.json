@@ -1,0 +1,11 @@
+{
+  "name": "maqueta-tailwind",
+  "private": true,
+  "devDependencies": {
+    "tailwindcss": "^3.4.19"
+  },
+  "scripts": {
+    "build": "tailwindcss -i ./src/style.css -o ./src/output.css",
+    "dev": "tailwindcss -i ./src/style.css -o ./src/output.css --watch"
+  }
+}
