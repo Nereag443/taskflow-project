@@ -178,21 +178,22 @@ taskListEl.addEventListener("click", (e) => {
 
 renderTasks();
 
-searchButtonEl.addEventListener("click", filterTasksBySearchText);
-searchInputEl.addEventListener("input", filterTasksBySearchText);
-function filterTasksBySearchText() {
-  const searchText = searchInputEl.value.toLowerCase();
+function setTaskCardsVisibilityByText(rawQuery) {
+  const query = normalizeTaskText(rawQuery).toLowerCase();
   const taskCards = document.querySelectorAll(".task-card");
 
   taskCards.forEach((card) => {
-    const taskText = card.querySelector("h3").textContent.toLowerCase();
-    if (taskText.includes(searchText)) {
-      card.style.display = "";
-    } else {
-      card.style.display = "none";
-    }
+    const taskText = (card.querySelector("h3")?.textContent ?? "").toLowerCase();
+    card.style.display = taskText.includes(query) ? "" : "none";
   });
 }
+
+function handleSearchChange() {
+  setTaskCardsVisibilityByText(searchInputEl.value);
+}
+
+searchButtonEl.addEventListener("click", handleSearchChange);
+searchInputEl.addEventListener("input", handleSearchChange);
 
 
 const darkModeButtonEl = document.getElementById("darkModeButton");
