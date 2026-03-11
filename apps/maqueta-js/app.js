@@ -74,6 +74,28 @@ taskBlock.addEventListener("click", (e) => {
   }
 });
 
+/**
+ * Manejador de clicks en el contenedor de tareas que se encarga
+ * únicamente de la lógica asociada al botón de borrado.
+ *
+ * Usa delegación de eventos y `closest` para ser robusto aunque
+ * se añadan elementos internos dentro del botón.
+ *
+ * @param {MouseEvent} event
+ */
+function handleTaskDeleteClick(event) {
+  const deleteButton = event.target.closest(".delete-button");
+  if (!deleteButton || !taskBlock.contains(deleteButton)) return;
+
+  const index = Number(deleteButton.dataset.index);
+  if (Number.isNaN(index)) return;
+
+  tasks.splice(index, 1);
+  saveAndRender();
+}
+
+taskBlock.addEventListener("click", handleTaskDeleteClick);
+
 render();
 
 finderButton.addEventListener("click", findTask);

@@ -221,13 +221,27 @@ taskListEl.addEventListener("change", (e) => {
   }
 });
 
-taskListEl.addEventListener("click", (e) => {
-  if (e.target.classList.contains("delete-button")) {
-    const taskIndex = Number(e.target.dataset.index);
-    taskItems.splice(taskIndex, 1);
-    persistAndRenderTasks();
-  }
-});
+/**
+ * Manejador de clicks en la lista de tareas que centraliza
+ * la lógica asociada al botón de borrado.
+ *
+ * Usa delegación de eventos y `closest` para tolerar futuros
+ * cambios en el contenido interno del botón.
+ *
+ * @param {MouseEvent} event
+ */
+function handleTaskListDeleteClick(event) {
+  const deleteButton = event.target.closest(".delete-button");
+  if (!deleteButton || !taskListEl.contains(deleteButton)) return;
+
+  const taskIndex = Number(deleteButton.dataset.index);
+  if (Number.isNaN(taskIndex)) return;
+
+  taskItems.splice(taskIndex, 1);
+  persistAndRenderTasks();
+}
+
+taskListEl.addEventListener("click", handleTaskListDeleteClick);
 
 renderTasks();
 
