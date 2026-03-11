@@ -4,7 +4,43 @@ const addTaskButtonEl = document.getElementById("add-task-button");
 const searchInputEl = document.getElementById("finder-text");
 const searchButtonEl = document.getElementById("search-task");
 
-let taskItems = JSON.parse(localStorage.getItem("tasks")) || [];
+const TASKS_STORAGE_KEY = "tasks";
+const TASK_TEXT_MIN_LEN = 2;
+const TASK_TEXT_MAX_LEN = 80;
+const TASKS_MAX_COUNT = 100;
+
+function normalizeTaskText(rawText) {
+  return String(rawText ?? "")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
+function escapeHtml(unsafe) {
+  return String(unsafe)
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&#039;");
+}
+
+function loadTasks() {
+  try {
+    const parsed = JSON.parse(localStorage.getItem(TASKS_STORAGE_KEY));
+    if (!Array.isArray(parsed)) return [];
+
+    return parsed
+      .map((t) => ({
+        text: normalizeTaskText(t?.text),
+        completed: Boolean(t?.completed),
+      }))
+      .filter((t) => t.text.length > 0);
+  } catch {
+    return [];
+  }
+}
+
+let taskItems = loadTasks();
 
 function renderTasks() {
   taskListEl.innerHTML = "";
@@ -13,7 +49,7 @@ function renderTasks() {
     taskListEl.innerHTML += `
       <section class="task-card flex items-center gap-3 rounded-lg p-8 mb-3 bg-rose-200 bg-opacity-40 shadow-md transition hover:-translate-y-1 hover:shadow-lg ${task.completed ? "opacity-50 line-through" : ""}">
         <header class="flex flex-col">
-          <h3 class="text-base font-medium">${task.text}</h3>
+          <h3 class="text-base font-medium">${escapeHtml(task.text)}</h3>
         </header>
         <button class="delete-button ml-auto w-6 h-6 bg-rose-400 text-white rounded hover:bg-rose-500 transition" data-index="${taskIndex}">&times;
         </button>
@@ -24,17 +60,91 @@ function renderTasks() {
 
 //Convierte array tasks a texto y lo guarda en el localStorage
 function persistTasks() {
-  localStorage.setItem("tasks", JSON.stringify(taskItems));
+  localStorage.setItem(TASKS_STORAGE_KEY, JSON.stringify(taskItems));
 }
 function persistAndRenderTasks() {
   persistTasks();
   renderTasks();
 }
 
+function ensureInlineErrorEl() {
+  const existing = document.getElementById("task-error");
+  if (existing) return existing;
+
+  const errorEl = document.createElement("p");
+  errorEl.id = "task-error";
+  errorEl.className =
+    "mt-2 text-sm text-rose-700 dark:text-rose-200 hidden";
+
+  const taskInputContainer = document.getElementById("task-input");
+  const header = taskInputContainer?.querySelector("header");
+  (header ?? taskInputContainer ?? taskListEl)?.appendChild(errorEl);
+
+  return errorEl;
+}
+
+function setTaskError(message) {
+  const errorEl = ensureInlineErrorEl();
+  if (!message) {
+    errorEl.textContent = "";
+    errorEl.classList.add("hidden");
+    return;
+  }
+  errorEl.textContent = message;
+  errorEl.classList.remove("hidden");
+}
+
+function validateNewTaskText(rawText) {
+  const normalized = normalizeTaskText(rawText);
+
+  if (!normalized) {
+    return { ok: false, text: normalized, error: "Escribe una tarea antes de añadirla." };
+  }
+
+  if (normalized.length < TASK_TEXT_MIN_LEN) {
+    return {
+      ok: false,
+      text: normalized,
+      error: `La tarea debe tener al menos ${TASK_TEXT_MIN_LEN} caracteres.`,
+    };
+  }
+
+  if (normalized.length > TASK_TEXT_MAX_LEN) {
+    return {
+      ok: false,
+      text: normalized,
+      error: `La tarea no puede superar ${TASK_TEXT_MAX_LEN} caracteres.`,
+    };
+  }
+
+  if (taskItems.length >= TASKS_MAX_COUNT) {
+    return {
+      ok: false,
+      text: normalized,
+      error: `Has alcanzado el máximo de ${TASKS_MAX_COUNT} tareas.`,
+    };
+  }
+
+  const normalizedKey = normalized.toLowerCase();
+  const isDuplicate = taskItems.some(
+    (t) => normalizeTaskText(t.text).toLowerCase() === normalizedKey,
+  );
+  if (isDuplicate) {
+    return { ok: false, text: normalized, error: "Esa tarea ya existe." };
+  }
+
+  return { ok: true, text: normalized, error: "" };
+}
+
 addTaskButtonEl.addEventListener("click", () => {
-  const newTaskText = taskInputEl.value.trim();
-  if (!newTaskText) return;
-  taskItems.push({ text: newTaskText, completed: false });
+  const validation = validateNewTaskText(taskInputEl.value);
+  if (!validation.ok) {
+    setTaskError(validation.error);
+    return;
+  }
+
+  setTaskError("");
+  taskItems.push({ text: validation.text, completed: false });
   taskInputEl.value = "";
   persistAndRenderTasks();
 });
@@ -43,6 +153,11 @@ addTaskButtonEl.addEventListener("click", () => {
 taskInputEl.addEventListener("keydown", (e) => {
   if (e.key === "Enter") {
     addTaskButtonEl.click();
+  }
+});
+taskInputEl.addEventListener("input", () => {
+  if (document.getElementById("task-error")?.textContent) {
+    setTaskError("");
   }
 });
 taskListEl.addEventListener("change", (e) => {
