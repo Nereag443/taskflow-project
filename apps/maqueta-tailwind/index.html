@@ -30,7 +30,7 @@
 
         <div id="task-finder" class="flex justify-between items-center gap-4 flex-wrap">
           <h2 class="text-xl font-semibold">Tareas</h2>
-          <section class="flex items-center gap-2">
+          <section class="flex items-center gap-2 flex-wrap">
             <input
               type="text"
               id="finder-text"
@@ -52,6 +52,13 @@
               <option value="urgent">Solo urgentes</option>
               <option value="non-urgent">No urgentes</option>
             </select>
+            <button
+              type="button"
+              id="sort-alpha"
+              class="ml-2 px-2 py-1 rounded bg-gray-200 text-gray-800 text-sm hover:bg-gray-300 dark:bg-gray-700 dark:text-gray-100 dark:hover:bg-gray-600 transition"
+            >
+              Ordenar A-Z
+            </button>
           </section>
         </div>
       

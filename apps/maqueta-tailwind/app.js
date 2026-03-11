@@ -4,6 +4,7 @@ const addTaskButtonEl = document.getElementById("add-task-button");
 const searchInputEl = document.getElementById("finder-text");
 const searchButtonEl = document.getElementById("search-task");
 const urgencyFilterEl = document.getElementById("urgency-filter");
+const sortAlphaButtonEl = document.getElementById("sort-alpha");
 
 const TASKS_STORAGE_KEY = "tasks";
 const TASK_TEXT_MIN_LEN = 2;
@@ -354,6 +355,18 @@ function handleUrgencyFilterChange() {
 }
 
 urgencyFilterEl.addEventListener("change", handleUrgencyFilterChange);
+
+/**
+ * Ordena las tareas alfabéticamente por su texto y las persiste.
+ */
+function handleSortAlphaClick() {
+  taskItems.sort((a, b) =>
+    a.text.localeCompare(b.text, "es", { sensitivity: "base" }),
+  );
+  persistAndRenderTasks();
+}
+
+sortAlphaButtonEl.addEventListener("click", handleSortAlphaClick);
 
 
 const darkModeButtonEl = document.getElementById("darkModeButton");
