@@ -3,6 +3,7 @@ const taskInputEl = document.getElementById("task-text");
 const addTaskButtonEl = document.getElementById("add-task-button");
 const searchInputEl = document.getElementById("finder-text");
 const searchButtonEl = document.getElementById("search-task");
+const urgencyFilterEl = document.getElementById("urgency-filter");
 
 const TASKS_STORAGE_KEY = "tasks";
 const TASK_TEXT_MIN_LEN = 2;
@@ -64,6 +65,8 @@ function loadTasks() {
 }
 
 let taskItems = loadTasks();
+let currentTextFilter = "";
+let currentUrgencyFilter = "all";
 
 /**
  * Renderiza en el DOM todas las tareas actuales de `taskItems`.
@@ -75,7 +78,10 @@ function renderTasks() {
 
   taskItems.forEach((task, taskIndex) => {
     taskListEl.innerHTML += `
-      <section class="task-card flex items-center gap-3 rounded-lg p-8 mb-8 bg-rose-200 bg-opacity-40 shadow-md transition hover:-translate-y-1 hover:shadow-lg ${task.completed ? "opacity-50 line-through" : ""} ${task.urgent ? "border-2 border-rose-500" : ""}">
+      <section
+        class="task-card flex items-center gap-3 rounded-lg p-8 mb-8 bg-rose-200 bg-opacity-40 shadow-md transition hover:-translate-y-1 hover:shadow-lg ${task.completed ? "opacity-50 line-through" : ""} ${task.urgent ? "border-2 border-rose-500" : ""}"
+        data-urgent="${task.urgent ? "true" : "false"}"
+      >
         <header class="flex flex-col gap-3 w-full">
           <h3 class="text-base font-medium">${escapeHtml(task.text)}</h3>
           <div class="border-t-2 border-rose-500 w-full mt-2"></div>
@@ -86,7 +92,7 @@ function renderTasks() {
               class="urgent-toggle px-2 py-1 rounded-full text-xs font-semibold ${
                 task.urgent
                   ? "bg-rose-500 text-red-500 hover:bg-rose-600"
-                  : "bg-rose-500 text-gray-800 hover:bg-gray-300"
+                  : "bg-rose-500 text-gray-800 hover:bg-rose-600"
               }"
               data-index="${taskIndex}"
             >
@@ -98,6 +104,9 @@ function renderTasks() {
       </section>
     `;
   });
+
+  // Reaplicamos los filtros activos tras volver a pintar las tarjetas
+  applyTaskFilters();
 }
 
 /**
@@ -298,16 +307,53 @@ function setTaskCardsVisibilityByText(rawQuery) {
 }
 
 /**
+ * Aplica conjuntamente el filtro de texto y el de urgencia
+ * sobre las tarjetas actualmente renderizadas.
+ */
+function applyTaskFilters() {
+  const query = normalizeTaskText(currentTextFilter).toLowerCase();
+  const urgency = currentUrgencyFilter;
+  const taskCards = document.querySelectorAll(".task-card");
+
+  taskCards.forEach((card) => {
+    const taskText = (card.querySelector("h3")?.textContent ?? "").toLowerCase();
+    const isUrgent = card.dataset.urgent === "true";
+
+    const matchesText = taskText.includes(query);
+    let matchesUrgency = true;
+
+    if (urgency === "urgent") {
+      matchesUrgency = isUrgent;
+    } else if (urgency === "non-urgent") {
+      matchesUrgency = !isUrgent;
+    }
+
+    card.style.display = matchesText && matchesUrgency ? "" : "none";
+  });
+}
+
+/**
  * Manejador de cambio de búsqueda que lee el valor del input
  * y aplica el filtro de visibilidad a las tarjetas.
  */
 
 function handleSearchChange() {
-  setTaskCardsVisibilityByText(searchInputEl.value);
+  currentTextFilter = searchInputEl.value;
+  applyTaskFilters();
 }
 
 searchButtonEl.addEventListener("click", handleSearchChange);
 searchInputEl.addEventListener("input", handleSearchChange);
+
+/**
+ * Manejador de cambio de filtro de urgencia.
+ */
+function handleUrgencyFilterChange() {
+  currentUrgencyFilter = urgencyFilterEl.value;
+  applyTaskFilters();
+}
+
+urgencyFilterEl.addEventListener("change", handleUrgencyFilterChange);
 
 
 const darkModeButtonEl = document.getElementById("darkModeButton");

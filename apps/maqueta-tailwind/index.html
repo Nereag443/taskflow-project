@@ -28,12 +28,31 @@
 
       <section class="w-full m-2.5 p-7" id="tareas">
 
-        <div id="task-finder" class="flex justify-between items-center">
-          <h2>Tareas</h2>
-        <section>
-          <input type="text" id="finder-text" placeholder="Búsca una tarea">
-          <button type="button" id="search-task">🔍</button>
-        </section>
+        <div id="task-finder" class="flex justify-between items-center gap-4 flex-wrap">
+          <h2 class="text-xl font-semibold">Tareas</h2>
+          <section class="flex items-center gap-2">
+            <input
+              type="text"
+              id="finder-text"
+              placeholder="Busca una tarea"
+              class="px-2 py-1 rounded border border-gray-300 text-sm"
+            />
+            <button
+              type="button"
+              id="search-task"
+              class="px-2 py-1 rounded bg-rose-400 text-white text-sm hover:bg-rose-500 transition"
+            >
+              🔍
+            </button>
+            <select
+              id="urgency-filter"
+              class="ml-4 px-2 py-1 rounded border border-gray-300 text-sm bg-white dark:bg-gray-800 dark:border-gray-600"
+            >
+              <option value="all">Todas</option>
+              <option value="urgent">Solo urgentes</option>
+              <option value="non-urgent">No urgentes</option>
+            </select>
+          </section>
         </div>
       
         <div id="task-block" class="flex flex-col gap-4 mt-4"></div>
