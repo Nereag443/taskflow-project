@@ -45,7 +45,7 @@ function escapeHtml(unsafe) {
  * Carga las tareas persistidas desde localStorage y devuelve
  * únicamente las que tengan texto válido.
  *
- * @returns {{ text: string; completed: boolean; urgent: boolean }[]} Lista de tareas normalizadas.
+ * @returns {{ text: string; completed: boolean; urgent: boolean; createdAt?: string | null }[]} Lista de tareas normalizadas.
  */
 
 function loadTasks() {
@@ -58,6 +58,7 @@ function loadTasks() {
         text: normalizeTaskText(t?.text),
         completed: Boolean(t?.completed),
         urgent: Boolean(t?.urgent),
+        createdAt: typeof t?.createdAt === "string" ? t.createdAt : null,
       }))
       .filter((t) => t.text.length > 0);
   } catch {
@@ -68,6 +69,24 @@ function loadTasks() {
 let taskItems = loadTasks();
 let currentTextFilter = "";
 let currentUrgencyFilter = "all";
+
+/**
+ * Formatea la fecha de creación de una tarea a un formato legible.
+ *
+ * @param {string | null | undefined} isoString
+ * @returns {string}
+ */
+function formatTaskCreatedDate(isoString) {
+  if (!isoString) return "fecha desconocida";
+  const date = new Date(isoString);
+  if (Number.isNaN(date.getTime())) return "fecha desconocida";
+
+  return date.toLocaleDateString("es-ES", {
+    day: "2-digit",
+    month: "2-digit",
+    year: "numeric",
+  });
+}
 
 /**
  * Renderiza en el DOM todas las tareas actuales de `taskItems`.
@@ -84,9 +103,12 @@ function renderTasks() {
         data-urgent="${task.urgent ? "true" : "false"}"
       >
         <header class="flex flex-col gap-3 w-full">
-          <h3 class="text-base font-medium">${escapeHtml(task.text)}</h3>
+          <h3 class="text-lg font-medium">${escapeHtml(task.text)}</h3>
+          <p class="text-xs text-gray-600 dark:text-gray-300">
+            Añadida el ${escapeHtml(formatTaskCreatedDate(task.createdAt))}
+          </p>
           <div class="border-t-2 border-rose-500 w-full mt-2"></div>
-          <div class="flex items-center gap-2 text-sm">
+          <div class="flex items-center gap-2 text-xs">
             <span class="font-semibold">Urgente:</span>
             <button
               type="button"
@@ -222,7 +244,12 @@ addTaskButtonEl.addEventListener("click", () => {
   }
 
   setTaskError("");
-  taskItems.push({ text: validation.text, completed: false, urgent: false });
+  taskItems.push({
+    text: validation.text,
+    completed: false,
+    urgent: false,
+    createdAt: new Date().toISOString(),
+  });
   taskInputEl.value = "";
   persistAndRenderTasks();
 });
