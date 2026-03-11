@@ -6,6 +6,10 @@ const finderButton =document.getElementById("search-task");
 
 let tasks = JSON.parse(localStorage.getItem("tasks")) || [];
 
+/**
+ * Renderiza todas las tareas almacenadas en `tasks` dentro del contenedor `taskBlock`.
+ * No modifica el estado de las tareas, solo su representación en el DOM.
+ */
 function render() {
   taskBlock.innerHTML = "";
 
@@ -24,10 +28,16 @@ function render() {
   });
 }
 
-//Convierte array tasks a texto y lo guarda en el localStorage
+/**
+ * Convierte el array `tasks` a texto JSON y lo guarda en localStorage.
+ */
 function saveTasks() {
   localStorage.setItem("tasks", JSON.stringify(tasks));
 }
+
+/**
+ * Guarda las tareas y vuelve a renderizar la lista en pantalla.
+ */
 function saveAndRender() {
   saveTasks();
   render();
@@ -68,6 +78,11 @@ render();
 
 finderButton.addEventListener("click", findTask);
 finderText.addEventListener("input", findTask);
+
+/**
+ * Filtra visualmente las tarjetas de tareas en función del texto
+ * introducido en el buscador `finderText`.
+ */
 function findTask(){
   const text=finderText.value.toLowerCase();
   const taskCards=document.querySelectorAll(".task-card");

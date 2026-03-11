@@ -9,11 +9,26 @@ const TASK_TEXT_MIN_LEN = 2;
 const TASK_TEXT_MAX_LEN = 80;
 const TASKS_MAX_COUNT = 100;
 
+/**
+ * Normaliza el texto de una tarea eliminando espacios extra
+ * y asegurando que siempre sea una cadena.
+ *
+ * @param {unknown} rawText - Valor bruto introducido por el usuario.
+ * @returns {string} Texto normalizado sin espacios sobrantes.
+ */
+
 function normalizeTaskText(rawText) {
   return String(rawText ?? "")
     .replace(/\s+/g, " ")
     .trim();
 }
+
+/**
+ * Escapa caracteres especiales HTML para evitar inyección en el DOM.
+ *
+ * @param {unknown} unsafe - Texto potencialmente inseguro.
+ * @returns {string} Texto seguro para insertar como HTML.
+ */
 
 function escapeHtml(unsafe) {
   return String(unsafe)
@@ -23,6 +38,13 @@ function escapeHtml(unsafe) {
     .replaceAll('"', "&quot;")
     .replaceAll("'", "&#039;");
 }
+
+/**
+ * Carga las tareas persistidas desde localStorage y devuelve
+ * únicamente las que tengan texto válido.
+ *
+ * @returns {{ text: string; completed: boolean }[]} Lista de tareas normalizadas.
+ */
 
 function loadTasks() {
   try {
@@ -42,6 +64,11 @@ function loadTasks() {
 
 let taskItems = loadTasks();
 
+/**
+ * Renderiza en el DOM todas las tareas actuales de `taskItems`.
+ * No modifica el estado de las tareas, solo su representación visual.
+ */
+
 function renderTasks() {
   taskListEl.innerHTML = "";
 
@@ -58,14 +85,27 @@ function renderTasks() {
   });
 }
 
-//Convierte array tasks a texto y lo guarda en el localStorage
+/**
+ * Convierte el array `taskItems` a JSON y lo guarda en localStorage.
+ */
 function persistTasks() {
   localStorage.setItem(TASKS_STORAGE_KEY, JSON.stringify(taskItems));
 }
+
+/**
+ * Guarda las tareas en localStorage y vuelve a renderizar la lista.
+ */
 function persistAndRenderTasks() {
   persistTasks();
   renderTasks();
 }
+
+/**
+ * Asegura que exista un elemento de error inline para el input de tareas
+ * y lo devuelve para poder reutilizarlo.
+ *
+ * @returns {HTMLParagraphElement} Elemento de párrafo usado para mostrar errores.
+ */
 
 function ensureInlineErrorEl() {
   const existing = document.getElementById("task-error");
@@ -83,6 +123,12 @@ function ensureInlineErrorEl() {
   return errorEl;
 }
 
+/**
+ * Muestra u oculta el mensaje de error asociado al input de tareas.
+ *
+ * @param {string} message - Mensaje de error a mostrar. Si está vacío, se oculta.
+ */
+
 function setTaskError(message) {
   const errorEl = ensureInlineErrorEl();
   if (!message) {
@@ -93,6 +139,13 @@ function setTaskError(message) {
   errorEl.textContent = message;
   errorEl.classList.remove("hidden");
 }
+
+/**
+ * Valida el texto de una nueva tarea y devuelve el resultado de la validación.
+ *
+ * @param {string} rawText - Texto introducido por el usuario.
+ * @returns {{ ok: boolean; text: string; error: string }} Resultado de la validación.
+ */
 
 function validateNewTaskText(rawText) {
   const normalized = normalizeTaskText(rawText);
@@ -178,6 +231,13 @@ taskListEl.addEventListener("click", (e) => {
 
 renderTasks();
 
+/**
+ * Actualiza la visibilidad de las tarjetas de tareas en función
+ * de si su texto contiene la consulta indicada.
+ *
+ * @param {string} rawQuery - Texto de búsqueda introducido por el usuario.
+ */
+
 function setTaskCardsVisibilityByText(rawQuery) {
   const query = normalizeTaskText(rawQuery).toLowerCase();
   const taskCards = document.querySelectorAll(".task-card");
@@ -187,6 +247,11 @@ function setTaskCardsVisibilityByText(rawQuery) {
     card.style.display = taskText.includes(query) ? "" : "none";
   });
 }
+
+/**
+ * Manejador de cambio de búsqueda que lee el valor del input
+ * y aplica el filtro de visibilidad a las tarjetas.
+ */
 
 function handleSearchChange() {
   setTaskCardsVisibilityByText(searchInputEl.value);
