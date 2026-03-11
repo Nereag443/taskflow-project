@@ -43,7 +43,7 @@ function escapeHtml(unsafe) {
  * Carga las tareas persistidas desde localStorage y devuelve
  * únicamente las que tengan texto válido.
  *
- * @returns {{ text: string; completed: boolean }[]} Lista de tareas normalizadas.
+ * @returns {{ text: string; completed: boolean; urgent: boolean }[]} Lista de tareas normalizadas.
  */
 
 function loadTasks() {
@@ -55,6 +55,7 @@ function loadTasks() {
       .map((t) => ({
         text: normalizeTaskText(t?.text),
         completed: Boolean(t?.completed),
+        urgent: Boolean(t?.urgent),
       }))
       .filter((t) => t.text.length > 0);
   } catch {
@@ -74,12 +75,26 @@ function renderTasks() {
 
   taskItems.forEach((task, taskIndex) => {
     taskListEl.innerHTML += `
-      <section class="task-card flex items-center gap-3 rounded-lg p-8 mb-3 bg-rose-200 bg-opacity-40 shadow-md transition hover:-translate-y-1 hover:shadow-lg ${task.completed ? "opacity-50 line-through" : ""}">
-        <header class="flex flex-col">
+      <section class="task-card flex items-center gap-3 rounded-lg p-8 mb-8 bg-rose-200 bg-opacity-40 shadow-md transition hover:-translate-y-1 hover:shadow-lg ${task.completed ? "opacity-50 line-through" : ""} ${task.urgent ? "border-2 border-rose-500" : ""}">
+        <header class="flex flex-col gap-3 w-full">
           <h3 class="text-base font-medium">${escapeHtml(task.text)}</h3>
+          <div class="border-t-2 border-rose-500 w-full mt-2"></div>
+          <div class="flex items-center gap-2 text-sm">
+            <span class="font-semibold">Urgente:</span>
+            <button
+              type="button"
+              class="urgent-toggle px-2 py-1 rounded-full text-xs font-semibold ${
+                task.urgent
+                  ? "bg-rose-500 text-red-500 hover:bg-rose-600"
+                  : "bg-rose-500 text-gray-800 hover:bg-gray-300"
+              }"
+              data-index="${taskIndex}"
+            >
+              ${task.urgent ? "Sí" : "No"}
+            </button>
+          </div>
         </header>
-        <button class="delete-button ml-auto w-6 h-6 bg-rose-400 text-white rounded hover:bg-rose-500 transition" data-index="${taskIndex}">&times;
-        </button>
+        <button class="delete-button ml-auto w-6 h-6 bg-rose-400 text-white rounded hover:bg-rose-500 transition" data-index="${taskIndex}">&times;</button>
       </section>
     `;
   });
@@ -197,7 +212,7 @@ addTaskButtonEl.addEventListener("click", () => {
   }
 
   setTaskError("");
-  taskItems.push({ text: validation.text, completed: false });
+  taskItems.push({ text: validation.text, completed: false, urgent: false });
   taskInputEl.value = "";
   persistAndRenderTasks();
 });
@@ -242,6 +257,26 @@ function handleTaskListDeleteClick(event) {
 }
 
 taskListEl.addEventListener("click", handleTaskListDeleteClick);
+
+/**
+ * Manejador de clicks en los controles de urgencia de cada tarjeta.
+ *
+ * Permite marcar una tarea como urgente o no urgente después de crearla.
+ *
+ * @param {MouseEvent} event
+ */
+function handleTaskListUrgentClick(event) {
+  const urgentButton = event.target.closest(".urgent-toggle");
+  if (!urgentButton || !taskListEl.contains(urgentButton)) return;
+
+  const taskIndex = Number(urgentButton.dataset.index);
+  if (Number.isNaN(taskIndex)) return;
+
+  taskItems[taskIndex].urgent = !taskItems[taskIndex].urgent;
+  persistAndRenderTasks();
+}
+
+taskListEl.addEventListener("click", handleTaskListUrgentClick);
 
 renderTasks();
 

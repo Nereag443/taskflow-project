@@ -104,3 +104,115 @@ Explicación corta del código
  Si no es "dark":
    Se quita la clase dark del <html> para usar el modo claro.
    El texto del botón pasa a ser 🌙 (indica que estás en claro y podrías cambiar a oscuro).
+
+
+Además le pido que documente el proyecto al completo por carpetas, sin referencias a los nombres de las variables y de forma clara y sintetizada:
+
+Respuesta:
+Raíz del proyecto
+  Descripción: Conjunto de maquetas de una aplicación de tareas (to‑do) en distintos enfoques: solo maquetación, maquetación con lógica en el navegador y maquetación con Tailwind.
+  Contenido: archivo de descripción general y configuración básica del repositorio.
+Carpeta apps/maqueta-html
+  Objetivo: Demostración puramente visual de la app de tareas, orientada a estructura y estilos sin  comportamiento dinámico.
+  HTML: página con cabecera, menú lateral de navegación y sección principal de tareas con tarjetas estáticas y un formulario de nueva tarea solo decorativo.
+ CSS: define paleta de colores, tipografía, distribución con flexbox, diseño de tarjetas, checkboxes personalizados y comportamiento responsive en pantallas pequeñas.
+Carpeta apps/maqueta-js
+  Objetivo: Versión funcional de la app con interacción en el navegador, manteniendo un diseño similar a la maqueta HTML.
+  HTML: misma estructura base, añadiendo un bloque de búsqueda de tareas y una zona donde se insertan dinámicamente las tarjetas.
+  CSS: estilos similares a la maqueta HTML, adaptados a la nueva estructura (buscador, contenedor dinámico de tareas).
+  JavaScript:
+  Carga y guarda tareas en almacenamiento local del navegador.
+  Genera y actualiza las tarjetas a partir de una lista en memoria.
+  Permite añadir, marcar como completadas y borrar tareas.
+  Incluye un buscador que filtra las tareas mostradas según el texto introducido.
+Carpeta apps/maqueta-tailwind
+  Objetivo: Versión de la app con Tailwind CSS, mejorando el diseño y añadiendo modo oscuro.
+  HTML:
+  Usa clases utilitarias para maquetar cabecera, menú lateral y sección de tareas.
+  Integra un botón para alternar entre modo claro y oscuro.
+  Mantiene buscador, lista dinámica de tareas y formulario de alta.
+  JavaScript:
+  Gestiona una lista de tareas con validaciones (longitud, duplicados, límite máximo).
+  Persiste el estado en almacenamiento local y vuelve a dibujar la interfaz cuando cambian los datos.
+  Aplica filtrado visual de tarjetas según el texto del buscador.
+  Controla el modo oscuro mediante una clase en el documento y recordando la preferencia del usuario.
+  Configuración Tailwind:
+  Activa modo oscuro por clase.
+  Define rutas de análisis de contenido para eliminar estilos no usados.
+  Añade una lista de clases garantizadas para elementos generados dinámicamente.
+  Extiende la paleta de colores y ajustes de transición.
+  Build de estilos:
+  Incluye configuración de dependencias y comandos para generar el CSS final utilizado por la página.
+Carpeta docs/ai
+  Objetivo: Recoger notas y experimentos relacionados con asistentes de IA y el flujo de trabajo en el editor.
+  Documento de flujo de trabajo: explica cómo se usan las herramientas del editor, atajos de teclado y ejemplos de cómo la IA ayuda a refactorizar y mejorar código.
+  Documento de prompts: reúne pruebas de diseño de instrucciones, ejemplos con entradas y salidas y análisis de cómo responde la IA a distintos formatos de petición.
+  Documento de comparación de IA: contrasta respuestas de distintos modelos sobre conceptos de programación, detección de errores y generación de funciones a partir de lenguaje natural.
+
+Le pido que refactorice funciones que tengan que ver con el botón de borrar que aparece en todo el proyecto:
+Respuesta: refactorización de las funciones del botón de borrar el ambas versiones de la app:
+/**
+ * Manejador de clicks en el contenedor de tareas que se encarga
+ * únicamente de la lógica asociada al botón de borrado.
+ *
+ * Usa delegación de eventos y `closest` para ser robusto aunque
+ * se añadan elementos internos dentro del botón.
+ *
+ * @param {MouseEvent} event
+ */
+function handleTaskDeleteClick(event) {
+  const deleteButton = event.target.closest(".delete-button");
+  if (!deleteButton || !taskBlock.contains(deleteButton)) return;
+
+  const index = Number(deleteButton.dataset.index);
+  if (Number.isNaN(index)) return;
+
+  tasks.splice(index, 1);
+  saveAndRender();
+}
+
+taskBlock.addEventListener("click", handleTaskDeleteClick);
+
+/**
+ * Manejador de clicks en la lista de tareas que centraliza
+ * la lógica asociada al botón de borrado.
+ *
+ * Usa delegación de eventos y `closest` para tolerar futuros
+ * cambios en el contenido interno del botón.
+ *
+ * @param {MouseEvent} event
+ */
+function handleTaskListDeleteClick(event) {
+  const deleteButton = event.target.closest(".delete-button");
+  if (!deleteButton || !taskListEl.contains(deleteButton)) return;
+
+  const taskIndex = Number(deleteButton.dataset.index);
+  if (Number.isNaN(taskIndex)) return;
+
+  taskItems.splice(taskIndex, 1);
+  persistAndRenderTasks();
+}
+
+taskListEl.addEventListener("click", handleTaskListDeleteClick);
+
+Refactor de lógica del botón de borrar
+He buscado todos los usos de delete-button y he refactorizado la lógica asociada en las dos apps funcionales.
+
+En la versión JS (maqueta-js):
+
+Antes: un listener anónimo en el contenedor comprobaba directamente e.target.classList.contains("delete-button") y borraba la tarea.
+Ahora: hay una función específica handleTaskDeleteClick que:
+Usa closest(".delete-button") para ser robusta si cambias el contenido interno del botón.
+Valida que el botón pertenece al contenedor y que el índice es numérico.
+Encapsula la eliminación del elemento de la lista y el re‑renderizado.
+El contenedor de tareas añade un único listener reutilizando esa función.
+En la versión Tailwind (maqueta-tailwind):
+
+Antes: patrón muy similar, con un listener anónimo que borraba directamente.
+Ahora: función handleTaskListDeleteClick con la misma idea:
+Delegación con closest, comprobaciones de seguridad y borrado centralizado.
+El contenedor de la lista de tareas solo registra esta función como manejador.
+No he tocado el marcado HTML ni los estilos; solo he mejorado y unificado la forma en la que se gestiona el botón de borrar para que el código sea más claro, reutilizable y resistente a cambios en la estructura interna de las tarjetas.
+
+
+
