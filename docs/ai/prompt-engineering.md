@@ -1,4 +1,4 @@
-En este documento experimentare con varior prompts
+En este documento experimentare con varios prompts.
 
 Primero le dare prompts con ejemplos (few-shot prompting):
 
