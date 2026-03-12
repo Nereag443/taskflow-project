@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <title>To Do List App</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+     <link href="src/output.css" rel="stylesheet">
+  </head>
+  <body class="flex flex-col font-sans bg-white dark:bg-gray-900 text-black dark:text-white">
+    <header class="ml-2.5 rounded-lg bg-rose-200 bg-opacity-40 p-2.5 text-center">
+      <h1 class="text-3xl font-semibold">To Do List</h1>
+      
+      <button class="px-3 py-2 rounded-lg bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 hover:bg-gray-300 dark:hover:bg-gray-600 transition-all shadow-md" id="darkModeButton">🌙</button>
+
+    </header>
+
+    <main class="flex gap-5 p-2.5 md:flex-row flex-col">
+      <aside class="rounded-lg bg-rose-200 bg-opacity-40 p-2.5 w-full md:w-64 min-h-auto md:min-h-screen">
+        <h2>Opciones</h2>
+        <ul class="mt-2.5 list-none pl-0">
+          <li class="p-2.5 rounded-lg mb-7 text-lg cursor-pointer hover:bg-rose-300 bg-opacity-40 transition"><a href="#usuario">👤 Usuario</a></li>
+          <li class="p-2.5 rounded-lg mb-7 text-lg cursor-pointer hover:bg-rose-300 bg-opacity-40 transition"><a href="#tareas">📋 Tareas</a></li>
+          <li class="p-2.5 rounded-lg mb-7 text-lg cursor-pointer hover:bg-rose-300 bg-opacity-40 transition"><a href="#calendario">📅 Calendario</a></li>
+          <li class="p-2.5 rounded-lg mb-7 text-lg cursor-pointer hover:bg-rose-300 bg-opacity-40 transition"><a href="#configuración">⚙ Configuración</a></li>
+
+        </ul>
+      </aside>
+
+      <section class="w-full m-2.5 p-7" id="tareas">
+
+        <div id="task-finder" class="flex justify-between items-center gap-4 flex-wrap">
+          <h2 class="text-xl font-semibold">Tareas</h2>
+          <section class="flex items-center gap-2 flex-wrap">
+            <input
+              type="text"
+              id="finder-text"
+              placeholder="Busca una tarea"
+              class="px-2 py-1 rounded border border-gray-300 text-sm"
+            />
+            <button
+              type="button"
+              id="search-task"
+              class="px-2 py-1 rounded bg-rose-400 text-white text-sm hover:bg-rose-500 transition dark:bg-gray-700"
+            >
+              🔍
+            </button>
+            <select
+              id="urgency-filter"
+              class="ml-4 px-2 py-1 rounded border border-gray-300 text-sm bg-white dark:bg-gray-800 dark:border-gray-600"
+            >
+              <option value="all">Todas</option>
+              <option value="urgent">Solo urgentes</option>
+              <option value="non-urgent">No urgentes</option>
+            </select>
+            <button
+              type="button"
+              id="sort-alpha"
+              class="ml-2 px-2 py-1 rounded bg-gray-200 text-gray-800 text-sm hover:bg-gray-300 dark:bg-gray-700 dark:text-white dark:hover:bg-gray-600 transition"
+            >
+              Ordenar A-Z
+            </button>
+          </section>
+        </div>
+      
+        <div id="task-block" class="flex flex-col gap-5 mt-6"></div>
+
+        <section class="h1-contenteditable mt-2.5" id="task-input">
+          <header>
+            <input type="text" id="task-text"placeholder="Añade una tarea" />
+            <button type="button" id="add-task-button" class="px-2 py-1 rounded bg-rose-400 text-white text-sm hover:bg-rose-500 transition dark:bg-gray-700">Aceptar</button >
+          </header>
+          
+        </section>
+      </section>
+
+      <script src="app.js"></script>
+    </main>
+  </body>
+</html>
