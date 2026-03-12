@@ -10,9 +10,9 @@ Sirve como base para experimentar con listas de tareas, filtros, estados y organ
 
 ### Estructura del proyecto
 
-- `apps/maqueta-html/`: maqueta solo HTML/CSS (sin lógica).
-- `apps/maqueta-js/`: maqueta HTML/CSS + JS (localStorage, buscador, etc.).
-- `apps/maqueta-tailwind/`: maqueta con Tailwind (CSS generado en `src/output.css`).
+- `maqueta-html/`: maqueta solo HTML/CSS (sin lógica).
+- `maqueta-js/`: maqueta HTML/CSS + JS (localStorage, buscador, etc.).
+- `maqueta-tailwind/`: maqueta con Tailwind (CSS generado en `src/output.css`).
 - `docs/`: documentación (IA, notas, etc.).
 
 ---
@@ -46,7 +46,7 @@ No hay dependencia de backend ni base de datos. La instalación se reduce a prep
 
 - **Objetivo**: Ver el diseño de la app de tareas sin lógica.
 - **Uso**:
-  - Abrir `apps/maqueta-html/index.html` directamente en el navegador (doble clic o `Abrir con…`).
+  - Abrir `maqueta-html/index.html` directamente en el navegador (doble clic o `Abrir con…`).
   - Navegar por la interfaz, revisar layout y estilos.
 
 #### 2. Maqueta JS (UI + lógica básica)
@@ -56,18 +56,18 @@ No hay dependencia de backend ni base de datos. La instalación se reduce a prep
   - Persistencia en `localStorage`.
   - Buscador/filtros (según lo implementado).
 - **Uso**:
-  - Abrir `apps/maqueta-js/index.html` en el navegador.
+  - Abrir `maqueta-js/index.html` en el navegador.
   - Añadir tareas, marcarlas como completadas, refrescar la página y comprobar que se mantienen.
 
 #### 3. Maqueta Tailwind (UI con Tailwind + build)
 
 - **Objetivo**: Explorar el mismo concepto de app to‑do pero con Tailwind y un flujo de build.
 - **Uso rápido (sin tocar código)**:
-  - Abrir `apps/maqueta-tailwind/index.html` en el navegador.
+  - Abrir `maqueta-tailwind/index.html` en el navegador.
 
 - **Modificar estilos o estructura**:
   1. Ir a la carpeta:
-     - `cd apps/maqueta-tailwind`
+     - `cd maqueta-tailwind`
   2. Instalar dependencias (una sola vez):
      - `npm install`
   3. Para ver cambios mientras editas (`src`):
@@ -87,18 +87,18 @@ No hay dependencia de backend ni base de datos. La instalación se reduce a prep
 ### Ejemplos de uso
 
 - **Ejemplo 1: Lista de tareas personales (maqueta JS)**  
-  1. Abre `apps/maqueta-js/index.html` en el navegador.  
+  1. Abre `maqueta-js/index.html` en el navegador.  
   2. Añade tareas como "Sacar al perro", "Hacer la compra".  
   3. Márcalas como completadas y refresca la página para comprobar que siguen guardadas gracias a `localStorage`.  
   4. Usa el buscador/filtros (si están activos) para encontrar tareas por texto.
 
 - **Ejemplo 2: Tablero de trabajo simple (maqueta HTML)**  
-  1. Abre `apps/maqueta-html/index.html`.  
+  1. Abre `maqueta-html/index.html`.  
   2. Imagina columnas o bloques como "Pendiente", "En curso", "Hecho" y usa la maqueta para discutir con el equipo cómo debería verse un flujo tipo kanban.  
   3. Anota cambios deseados de UI (colores, tamaños, orden de secciones) antes de pasar a la maqueta JS o Tailwind.
 
 - **Ejemplo 3: Probar cambios rápidos de estilo (maqueta Tailwind)**  
-  1. Ve a `apps/maqueta-tailwind` y ejecuta:  
+  1. Ve a `maqueta-tailwind` y ejecuta:  
      - `npm install` (solo la primera vez)  
      - `npm run dev`  
   2. Modifica clases de Tailwind en los archivos de `src/` (por ejemplo, cambiar colores de botones o tamaños de tipografías).  
