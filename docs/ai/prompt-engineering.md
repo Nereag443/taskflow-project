@@ -4,27 +4,24 @@ Primero le dare prompts con ejemplos (few-shot prompting):
 
 Dime los tipos de datos:
 Ejemplo 1:
-Input:
-1
+Input: 1
 
-Output:
-int
+Output: int
 
 Ejemplo 2:
-Input:
-Hola
+Input: Hola
 
-Output:
-String
+Output: String
 
 Ahora responde:
 
-Input:
-True
+Input: True
 
 Output:
 
 Respuesta: Output: bool
+
+
 
 Convierte JSON a una descripción.
 
@@ -50,6 +47,40 @@ Input:
 Output:
 
 Respuesta: Output: Abel tiene 27 años.
+
+
+Traduce las siguientes frases del español al inglés:
+Ejemplo1:
+Español: Hola, ¿cómo estás?
+Inglés: Hello, how are you?
+
+Ejemplo2:
+Español: Me gusta el chocolate.
+Inglés: I like chocolate.
+
+Español: ¿Dónde está el baño?
+Inglés:
+
+Respuesta: 
+Inglés: Where is the bathroom?
+
+
+
+Dame un sinónimo de la palabra:
+
+Palabra: Acabar
+Sinónimo: Terminar
+
+Palabra: Cómodo
+Sinónimo: Confortable
+
+Palabra: Mirar
+Sinónimo:
+
+Respuesta: 
+Sinónimo: Ver
+
+
 
 Ahora le pido que me explique paso a paso una parte de código:
 const darkModeButtonEl = document.getElementById("darkModeButton");
@@ -92,6 +123,7 @@ Aplica o quita la clase dark al <html> según ese valor.
 Sincroniza el icono del botón (🌞 o 🌙) con el estado actual para que el usuario vea visualmente si está en modo oscuro o claro.
 
 
+
 Ahora le pido que explique el mismo código del ejemplo anterior pero con dos restricciones: respuesta más corta y quitando la refencia a las lineas del código de la explicación:
 
 Respuesta:
@@ -104,6 +136,7 @@ Explicación corta del código
  Si no es "dark":
    Se quita la clase dark del <html> para usar el modo claro.
    El texto del botón pasa a ser 🌙 (indica que estás en claro y podrías cambiar a oscuro).
+
 
 
 Además le pido que documente el proyecto al completo por carpetas, sin referencias a los nombres de las variables y de forma clara y sintetizada:
@@ -148,6 +181,111 @@ Carpeta docs/ai
   Documento de flujo de trabajo: explica cómo se usan las herramientas del editor, atajos de teclado y ejemplos de cómo la IA ayuda a refactorizar y mejorar código.
   Documento de prompts: reúne pruebas de diseño de instrucciones, ejemplos con entradas y salidas y análisis de cómo responde la IA a distintos formatos de petición.
   Documento de comparación de IA: contrasta respuestas de distintos modelos sobre conceptos de programación, detección de errores y generación de funciones a partir de lenguaje natural.
+
+
+
+Ahora le pido que me explique esta parte del código pero que se salte los buttons:
+function renderTasks() {
+  taskListEl.innerHTML = "";
+
+  taskItems.forEach((task, taskIndex) => {
+    taskListEl.innerHTML += `
+      <section
+        class="task-card flex items-center rounded-lg p-8 bg-rose-200 bg-opacity-40 shadow-md transition transform hover:-translate-y-1 hover:shadow-lg ${task.completed ? "opacity-50 line-through" : ""} ${task.urgent ? "border-2 border-rose-500" : ""}"
+        data-urgent="${task.urgent ? "true" : "false"}"
+      >
+        <header class="flex flex-col w-full">
+          <h3 class="text-lg font-medium">${escapeHtml(task.text)}</h3>
+          <p class="text-xs text-gray-600 dark:text-gray-300">
+            Añadida el ${escapeHtml(formatTaskCreatedDate(task.createdAt))}
+          </p>
+          <div class="border-t-2 border-rose-400 w-full mt-2"></div>
+          <div class="flex items-center gap-2 text-xs">
+            <span class="font-semibold">Urgente:</span>
+            <button
+              type="button"
+              class="urgent-toggle px-2 py-1 rounded-full text-xs font-semibold ${
+                task.urgent
+                  ? "bg-rose-400 text-gray-800 hover:bg-rose-400"
+                  : "text-gray-800 hover:bg-rose-400"
+              }"
+              data-index="${taskIndex}"
+            >
+              ${task.urgent ? "Sí" : "No"}
+            </button>
+          </div>
+        </header>
+        <button class="delete-button ml-auto w-6 h-6 bg-rose-400 text-white rounded hover:bg-rose-500 transition dark:bg-gray-700" data-index="${taskIndex}">&times;</button>
+      </section>
+    `;
+  });
+
+  Respuesta:Explicación del código (sin centrarnos en los button)
+Función renderTasks
+Define una función que se encarga de pintar en pantalla todas las tareas.
+
+Limpieza inicial de la lista
+
+taskListEl.innerHTML = "";
+Antes de volver a dibujar las tareas, vacía el contenido HTML del contenedor (taskListEl) para no duplicar elementos.
+
+Recorrido de las tareas
+
+taskItems.forEach((task, taskIndex) => {
+Recorre el array taskItems. Para cada elemento:
+
+task es el objeto tarea actual.
+taskIndex es su posición en el array (se usa luego en data-index).
+Construcción del HTML de cada tarjeta de tarea
+
+taskListEl.innerHTML += `
+  <section
+    class="task-card ... ${task.completed ? "opacity-50 line-through" : ""} ${task.urgent ? "border-2 border-rose-500" : ""}"
+    data-urgent="${task.urgent ? "true" : "false"}"
+  >
+    <header class="flex flex-col w-full">
+      <h3 class="text-lg font-medium">${escapeHtml(task.text)}</h3>
+      <p class="text-xs text-gray-600 dark:text-gray-300">
+        Añadida el ${escapeHtml(formatTaskCreatedDate(task.createdAt))}
+      </p>
+      <div class="border-t-2 border-rose-400 w-full mt-2"></div>
+      <div class="flex items-center gap-2 text-xs">
+        <span class="font-semibold">Urgente:</span>
+        ...
+      </div>
+    </header>
+    ...
+  </section>
+`;
+Uso de template literal: Se utiliza una cadena con backticks (`) para insertar HTML y poder mezclar texto con variables (${...}).
+Clases condicionales en class:
+task.completed ? "opacity-50 line-through" : ""
+Si la tarea está completada, añade clases para hacerla más transparente y tachada.
+task.urgent ? "border-2 border-rose-500" : ""
+Si la tarea es urgente, añade un borde rojo.
+Atributo data-urgent:
+data-urgent="${task.urgent ? "true" : "false"}"
+Guarda en el HTML si la tarea es urgente (true o false), útil para scripts o estilos.
+Contenido del header
+
+Título de la tarea:
+<h3 ...>${escapeHtml(task.text)}</h3>
+Muestra el texto de la tarea. escapeHtml se usa para evitar problemas de seguridad (como inyección de HTML).
+Fecha de creación formateada:
+Añadida el ${escapeHtml(formatTaskCreatedDate(task.createdAt))}
+Llama a formatTaskCreatedDate para formatear la fecha createdAt y la pasa también por escapeHtml.
+Línea separadora:
+<div class="border-t-2 border-rose-400 w-full mt-2"></div>
+Es solo una línea visual que separa el título/fecha de la parte inferior de la tarjeta.
+Contenedor “Urgente:”
+<div class="flex items-center gap-2 text-xs">
+  <span class="font-semibold">Urgente:</span>
+  ...
+</div>
+Prepara la sección visual donde se muestra la etiqueta “Urgente:” y, al lado, el botón (que estamos ignorando en la explicación lógica).
+En resumen, esta parte del código reconstruye toda la lista de tareas en el DOM, generando para cada tarea una tarjeta (section) con estilos condicionales según si la tarea está completada o es urgente, mostrando su texto y la fecha formateada.
+
+
 
 Le pido que refactorice funciones que tengan que ver con el botón de borrar que aparece en todo el proyecto:
 Respuesta: refactorización de las funciones del botón de borrar el ambas versiones de la app:
@@ -213,6 +351,3 @@ Ahora: función handleTaskListDeleteClick con la misma idea:
 Delegación con closest, comprobaciones de seguridad y borrado centralizado.
 El contenedor de la lista de tareas solo registra esta función como manejador.
 No he tocado el marcado HTML ni los estilos; solo he mejorado y unificado la forma en la que se gestiona el botón de borrar para que el código sea más claro, reutilizable y resistente a cambios en la estructura interna de las tarjetas.
-
-
-
