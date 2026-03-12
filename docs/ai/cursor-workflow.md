@@ -1,3 +1,5 @@
+Aquí voy a documentar distintos ejemplos de uso de Cursor.
+
 Atajos de teclado más usados: 
 - Ctrl + L (Chat contextual)
 - Ctrl + K (Edición inline)
