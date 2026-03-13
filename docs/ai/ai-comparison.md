@@ -75,7 +75,7 @@ JavaScript → usa el DOM para leer y modificar la página
 El DOM es la forma en que el navegador convierte el HTML en objetos que JavaScript puede manipular.
 
 
--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+---
 
 
 DOM Claude:
@@ -209,7 +209,7 @@ function declaration	Sí	✅ Sí
 ✅ En una frase:
 El hoisting es el comportamiento por el cual JavaScript registra primero las declaraciones de variables y funciones antes de ejecutar el código.
 
--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+---
 
 Hoisting Claude:
 El hoisting (o "elevación") es un comportamiento de JavaScript por el cual las declaraciones de variables y funciones son "movidas" al inicio de su ámbito antes de que el código se ejecute.
@@ -254,7 +254,7 @@ Consejo práctico
 Para evitar confusiones con el hoisting, es buena práctica declarar siempre las variables y funciones antes de usarlas, y preferir let y const sobre var.
 
 
--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+---
 
 
 Event loop ChatGPT:
@@ -385,7 +385,7 @@ mueve callbacks de las colas al Call Stack
 El Event Loop es el mecanismo que permite que JavaScript ejecute tareas asíncronas coordinando la pila de ejecución y las colas de tareas.
 
 
--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+---
 
 
 Event loop Claude:
@@ -451,7 +451,9 @@ ConceptoRolCall StackEjecuta el código sincrónicoWeb APIsGestiona tareas asín
 La clave para entenderlo es que JavaScript no espera — delega las tareas asíncronas al navegador y sigue ejecutando, recogiendo los resultados cuando el Call Stack está libre.
 
 
--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+----
+
+
 (condición invertida en if)
 
 Después les pedí que encontrasen y explicasen el bug en estas funciones:
@@ -513,7 +515,9 @@ taskInput.addEventListener("keydown", (e) => {
   if (e.key === "Enter") addTask.click();
 });
 
--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+---
+
 
 Claude:¡Sí! El bug está en la condición del if. Vamos a verlo:
 El código con el bug
@@ -552,7 +556,10 @@ Si inputText tiene contenido → añadir la tarea ✅
 Regla para recordarlo
 if (inputText) evalúa como true cuando la cadena no está vacía, ya que en JavaScript los strings vacíos son falsy y los strings con contenido son truthy.
 
--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+---
+
+
 (objeto del evento en lugar de string en if)
 
 taskBlock.addEventListener("change", (e) => {
@@ -640,7 +647,8 @@ Corrección:
 
 classList.contains("nombre-de-clase")
 
--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+---
 
 
 Claude:¡Sí! Aquí hay un bug claro. Vamos a verlo:
@@ -672,7 +680,9 @@ Código❌ AntesclassList.contains(e) → recibe un objeto Event✅ Despuésclas
 El nombre exacto de la clase ("task-checkbox" en este caso) dependerá del que hayas definido en tu HTML, pero la clave es que siempre debe ser un string.
 
 
--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+---
+
+
 (clase "theme" en lugar de "dark")
 
 const darkMode = document.getElementById("darkModeButton");
@@ -746,8 +756,7 @@ document.documentElement.classList.toggle("dark", theme === "dark");
 Esto reduce mucho los bugs en sistemas de dark mode. 🌙
 
 
--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-
+---
 
 
 Claude:¡Sí! El bug está en el argumento que se pasa a classList.add() y classList.remove(). Vamos a verlo:
@@ -777,7 +786,9 @@ Código❌ AntesclassList.add("theme") → clase incorrecta✅ DespuésclassList
 Es una confusión muy común entre el nombre de la clave en localStorage ("theme") y el nombre de la clase CSS que activa el estilo ("dark"). Son dos cosas distintas con propósitos distintos.
 
 
--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+---
+
+
 En este caso, Claude aplica mejor el código en el contexto de cada uno, ofreciendo explicaciones más detalladas.
 
 
