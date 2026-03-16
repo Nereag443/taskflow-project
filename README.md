@@ -1,5 +1,4 @@
 ## Taskflow Project
-#### URL de Vercel del proyecto: https://taskflow-project-tailwind-two.vercel.app
 
 Proyecto con **maquetas/experimentos** de una app tipo “to‑do”, probando distintos enfoques de UI y arquitectura front:
 
@@ -8,13 +7,6 @@ Proyecto con **maquetas/experimentos** de una app tipo “to‑do”, probando d
 - **Tailwind CSS con build tooling (npm)**
 
 Sirve como base para experimentar con listas de tareas, filtros, estados y organización de flujos de trabajo sencillos.
-
-### Diseño de la app
-
-La pantalla principal consta de una sección para gestionar tareas con:
-   - Un header con el nombre de la app y el botón para cambiar a modo oscuro
-   - Una barra lateral para navegar entre las futuras pantallas que tendrá la app, además de las estadísticas de la cantidad de tareas, las tareas completadas y las pendientes, junto con un botón para marcar todas las tareas como completadas y otro para borrar todas las completadas
-   - Una barra para añadir tareas junto con un botón, una barra de búsqueda, un filtro para mostrar las urgentes, las no urgentes o todas las tareas y un botón para ordenar las tareas en orden alfabético; además de los bloques de las propias tareas con un botón para tachar las completadas y otro para borrarlas
 
 ### Estructura del proyecto
 

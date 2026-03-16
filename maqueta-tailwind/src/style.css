@@ -1,3 +1,29 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+.check {
+  appearance: none;
+  width: 20px;
+  height: 20px;
+  border: 2px solid #555;
+  border-radius: 4px;
+  cursor: pointer;
+  position: relative;
+  transition: all 0.2s;
+}
+
+.check:checked {
+  background-color: #f87171; /* rose-400 */
+  border-color: #f87171;
+}
+
+.check:checked::before {
+  content: '✓';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: white;
+  font-size: 14px;
+}

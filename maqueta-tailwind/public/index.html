@@ -1,47 +1,160 @@
 <!doctype html>
 <html lang="es">
   <head>
-    <meta charset="UTF-8">
+    <meta charset="UTF-8" />
     <title>To Do List App</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-     <link href="./output.css" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link href="./output.css" rel="stylesheet" />
   </head>
-  <body class="flex flex-col font-sans bg-white dark:bg-gray-900 text-black dark:text-white">
-    <header class="ml-2.5 rounded-lg bg-rose-200 bg-opacity-40 p-2.5 text-center">
-      <h1 class="text-3xl font-semibold">To Do List</h1>
-      
-      <button class="px-3 py-2 rounded-lg bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 hover:bg-gray-300 dark:hover:bg-gray-600 transition-all shadow-md" id="darkModeButton">🌙</button>
-
+  <body
+    class="flex flex-col font-sans bg-white dark:bg-gray-800 text-black dark:text-white min-h-screen"
+  >
+    <header
+      class="ml-2.5 rounded-2xl bg-rose-200 bg-opacity-80 p-6 text-center shadow-lg dark:bg-gray-700"
+    >
+      <h1 class="text-4xl font-bold text-rose-800 dark:text-rose-200 mb-2">
+        To Do List
+      </h1>
+      <button
+        class="px-4 py-2 rounded-full bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-600 transition-all duration-200 shadow-md hover:shadow-lg transform hover:scale-105"
+        id="darkModeButton"
+      >
+        🌙
+      </button>
     </header>
 
     <main class="flex gap-5 p-2.5 md:flex-row flex-col">
-      <aside class="rounded-lg bg-rose-200 bg-opacity-40 p-2.5 w-full md:w-64 min-h-auto md:min-h-screen">
-        <h2>Opciones</h2>
-        <ul class="mt-2.5 list-none pl-0">
-          <li class="p-2.5 rounded-lg mb-7 text-lg cursor-pointer hover:bg-rose-300 bg-opacity-40 transition"><a href="#usuario">👤 Usuario</a></li>
-          <li class="p-2.5 rounded-lg mb-7 text-lg cursor-pointer hover:bg-rose-300 bg-opacity-40 transition"><a href="#tareas">📋 Tareas</a></li>
-          <li class="p-2.5 rounded-lg mb-7 text-lg cursor-pointer hover:bg-rose-300 bg-opacity-40 transition"><a href="#calendario">📅 Calendario</a></li>
-          <li class="p-2.5 rounded-lg mb-7 text-lg cursor-pointer hover:bg-rose-300 bg-opacity-40 transition"><a href="#configuración">⚙ Configuración</a></li>
-
+      <aside
+        class="rounded-2xl bg-rose-100 dark:bg-gray-700 p-6 w-full md:w-72 min-h-auto md:min-h-screen shadow-xl"
+      >
+        <h2
+          class="text-xl font-bold text-rose-700 dark:text-rose-300 mb-6 flex items-center gap-2"
+        >
+          Opciones
+        </h2>
+        <ul class="space-y-4 list-none pl-0">
+          <li
+            class="p-3 rounded-xl cursor-pointer hover:bg-rose-300 dark:hover:bg-gray-500 transition-all duration-200 transform hover:scale-105 shadow-sm hover:shadow-md hover:border-rose-400 dark:hover:border-gray-400"
+          >
+            <a
+              href="#user"
+              id="user-screen"
+              class="flex items-center gap-3 text-lg font-medium"
+            >
+              <span>👤</span> Usuario
+            </a>
+          </li>
+          <li
+            class="p-3 rounded-xl cursor-pointer hover:bg-rose-300 dark:hover:bg-gray-500 transition-all duration-200 transform hover:scale-105 shadow-sm hover:shadow-md hover:border-rose-400 dark:hover:border-gray-400"
+          >
+            <a
+              href="#tareas"
+              id="tasks-screen"
+              class="flex items-center gap-3 text-lg font-medium"
+            >
+              <span>📋</span> Tareas
+            </a>
+          </li>
+          <li
+            class="p-3 rounded-xl cursor-pointer hover:bg-rose-300 dark:hover:bg-gray-500 transition-all duration-200 transform hover:scale-105 shadow-sm hover:shadow-m hover:border-rose-400 dark:hover:border-gray-400"
+          >
+            <a
+              href="#calendar"
+              id="calendar-screen"
+              class="flex items-center gap-3 text-lg font-medium"
+            >
+              <span>📅</span> Calendario
+            </a>
+          </li>
+          <li
+            class="p-3 rounded-xl cursor-pointer hover:bg-rose-300 dark:hover:bg-gray-500 transition-all duration-200 transform hover:scale-105 shadow-sm hover:shadow-md hover:border-rose-400 dark:hover:border-gray-400"
+          >
+            <a
+              href="#settings"
+              id="settings-screen"
+              class="flex items-center gap-3 text-lg font-medium"
+            >
+              <span>⚙</span> Configuración
+            </a>
+          </li>
         </ul>
-      </aside>
+        <div
+          id="stats-panel"
+          class="mt-6 p-6 rounded-xl bg-white dark:bg-gray-800 shadow-lg transition-all duration-300"
+        >
+          <h3
+            class="text-lg font-bold text-rose-700 dark:text-rose-300 mb-4 flex items-center"
+          >
+            📈 Estadísticas
+          </h3>
+          <div class="space-y-3">
+            <div class="flex justify-between items-center">
+              <span class="flex items-center text-sm font-medium">
+                Tareas:
+                <span
+                  id="total-tasks"
+                  class="ml-1 text-rose-600 dark:text-rose-300 font-semibold"
+                  >0</span
+                >
+              </span>
+            </div>
+            <div class="flex justify-between items-center">
+              <span class="flex items-center text-sm font-medium">
+                Completadas:
+                <span id="completed-tasks" class="ml-1 font-semibold">0</span>
+              </span>
+            </div>
+            <div class="flex justify-between items-center">
+              <span class="flex items-center text-sm font-medium">
+                Pendientes:
+                <span id="pending-tasks" class="ml-1 font-semibold">0</span>
+              </span>
+            </div>
+          </div>
 
-      <section class="w-full m-2.5 p-7" id="tareas">
-
-        <div id="task-finder" class="flex justify-between items-center gap-4 flex-wrap">
-          <h2 class="text-xl font-semibold">Tareas</h2>
-          <div class="flex items-center gap-2 flex-wrap">
-            <input type="text" id="finder-text" placeholder="Busca una tarea" class="px-2 py-1 rounded border border-gray-300 text-sm">
+          <div class="mt-6 flex flex-col gap-3">
             <button
               type="button"
-              id="search-task"
-              class="px-2 py-1 rounded bg-rose-400 text-white text-sm hover:bg-rose-500 transition dark:bg-gray-700"
+              id="mark-all-completed-tasks"
+              class="w-full px-3 py-2 rounded-lg bg-rose-500 text-white hover:bg-rose-600 transition-all duration-200 shadow-md hover:shadow-lg flex items-center justify-center gap-2 dark:bg-gray-700 dark:hover:bg-gray-600"
             >
-              🔍
+              Marcar todas completadas
             </button>
+            <button
+              type="button"
+              id="clear-completed-tasks"
+              class="w-full px-3 py-2 rounded-lg bg-gray-400 text-white hover:bg-gray-500 transition-all duration-200 shadow-md hover:shadow-lg flex items-center justify-center gap-2 dark:bg-gray-600 dark:hover:bg-gray-500"
+            >
+              Borrar completadas
+            </button>
+          </div>
+        </div>
+      </aside>
+
+      <section
+        class="w-full m-4 p-8 flex flex-col bg-white dark:bg-gray-800"
+        id="tareas"
+      >
+        <div
+          id="task-finder"
+          class="flex justify-between items-center gap-4 flex-wrap mb-6 p-4 bg-white dark:bg-gray-800"
+        >
+          <h2
+            class="text-2xl font-bold text-rose-700 dark:text-rose-300 flex items-center gap-2"
+          >
+            Tareas
+          </h2>
+          <section class="flex items-center gap-3 flex-wrap">
+            <input
+              type="text"
+              id="finder-text"
+              placeholder="🔍 Busca una tarea"
+              class="px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-500 text-sm bg-white dark:bg-gray-700"
+            />
+            <button type="button" id="search-task"></button>
             <select
               id="urgency-filter"
-              class="ml-4 px-2 py-1 rounded border border-gray-300 text-sm bg-white dark:bg-gray-800 dark:border-gray-600"
+              class="px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-500 text-sm bg-white dark:bg-gray-700"
             >
               <option value="all">Todas</option>
               <option value="urgent">Solo urgentes</option>
@@ -50,25 +163,39 @@
             <button
               type="button"
               id="sort-alpha"
-              class="ml-2 px-2 py-1 rounded bg-gray-200 text-gray-800 text-sm hover:bg-gray-300 dark:bg-gray-700 dark:text-white dark:hover:bg-gray-600 transition"
+              class="px-4 py-2 rounded-lg bg-gray-200 dark:bg-gray-600 text-gray-800 dark:text-white text-sm hover:bg-gray-300 dark:hover:bg-gray-500 transition-all duration-200 shadow-md hover:shadow-lg transform hover:scale-105"
             >
               Ordenar A-Z
             </button>
-          </div>
+          </section>
         </div>
-      
-        <div id="task-block" class="flex flex-col gap-5 mt-6"></div>
 
-        <div class="h1-contenteditable mt-2.5" id="task-input">
-          <header>
-            <input type="text" id="task-text" placeholder="Añade una tarea">
-            <button type="button" id="add-task-button" class="px-2 py-1 rounded bg-rose-400 text-white text-sm hover:bg-rose-500 transition dark:bg-gray-700">Aceptar</button >
+        <div id="task-block" class="flex flex-col gap-6"></div>
+
+        <section
+          class="mt-5 p-6 w-full bg-white dark:bg-gray-800"
+          id="task-input"
+        >
+          <header class="flex gap-4 items-center">
+            <input
+              type="text"
+              id="task-text"
+              placeholder="Añade una nueva tarea"
+              class="flex-1 px-4 py-3 rounded-lg border border-gray-300 dark:border-gray-500 bg-white dark:bg-gray-700 transition text-lg"
+            />
+            <button
+              type="button"
+              id="add-task-button"
+              class="px-6 py-3 rounded-lg bg-rose-500 text-white text-lg font-medium hover:bg-rose-600 transition-all duration-200 shadow-md hover:shadow-lg transform hover:scale-105 dark:bg-gray-700 dark:hover:bg-gray-600"
+            >
+              Aceptar
+            </button>
           </header>
-          
-        </div>
+        </section>
       </section>
 
       <script src="app.js"></script>
     </main>
+    <footer></footer>
   </body>
 </html>

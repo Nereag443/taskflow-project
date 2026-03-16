@@ -99,11 +99,30 @@ function renderTasks() {
   taskItems.forEach((task, taskIndex) => {
     taskListEl.innerHTML += `
       <section
-        class="task-card flex items-center rounded-lg p-8 bg-rose-200 bg-opacity-40 shadow-md transition transform hover:-translate-y-1 hover:shadow-lg ${task.completed ? "opacity-50 line-through" : ""} ${task.urgent ? "border-2 border-rose-500" : ""}"
+        class="task-card flex items-center rounded-lg p-8 bg-rose-200 bg-opacity-40 shadow-md transition transform hover:-translate-y-1 hover:shadow-lg ${task.completed ? "opacity-50" : ""} ${task.urgent ? "border-2 border-rose-500" : ""}"
         data-urgent="${task.urgent ? "true" : "false"}"
       >
+      <label class="flex items-center cursor-pointer mr-4">
+  <input
+    type="checkbox"
+    class="check"
+    data-index="${taskIndex}"
+    ${task.completed ? "checked" : ""}
+  />
+</label>
         <header class="flex flex-col w-full">
-          <h3 class="text-lg font-medium">${escapeHtml(task.text)}</h3>
+        <div class="flex items-center justify-between w-full">
+          <h3 class="text-lg font-medium flex-1 ${task.completed ? "line-through text-gray-400" : ""}" data-index="${taskIndex}">${escapeHtml(task.text)}
+          </h3>
+          <button 
+      type="button" 
+      class="edit-button ml-2 text-gray-600 hover:text-rose-500 dark:text-white" 
+      data-index="${taskIndex}"
+      title="Editar tarea"
+    >
+      Editar tarea
+    </button>
+    </div>
           <p class="text-xs text-gray-600 dark:text-gray-300">
             Añadida el ${escapeHtml(formatTaskCreatedDate(task.createdAt))}
           </p>
@@ -128,13 +147,23 @@ function renderTasks() {
     `;
   });
 
-  // Reaplicamos los filtros activos tras volver a pintar las tarjetas
   applyTaskFilters();
+}
+
+function updateStats() {
+  const total = taskItems.length;
+  const completed = taskItems.filter((t) => t.completed).length;
+  const pending = total - completed;
+
+  document.getElementById("total-tasks").textContent = total;
+  document.getElementById("completed-tasks").textContent = completed;
+  document.getElementById("pending-tasks").textContent = pending;
 }
 
 /**
  * Convierte el array `taskItems` a JSON y lo guarda en localStorage.
  */
+
 function persistTasks() {
   localStorage.setItem(TASKS_STORAGE_KEY, JSON.stringify(taskItems));
 }
@@ -142,9 +171,11 @@ function persistTasks() {
 /**
  * Guarda las tareas en localStorage y vuelve a renderizar la lista.
  */
+
 function persistAndRenderTasks() {
   persistTasks();
   renderTasks();
+  updateStats();
 }
 
 /**
@@ -160,8 +191,7 @@ function ensureInlineErrorEl() {
 
   const errorEl = document.createElement("p");
   errorEl.id = "task-error";
-  errorEl.className =
-    "mt-2 text-sm text-rose-700 dark:text-rose-200 hidden";
+  errorEl.className = "mt-2 text-sm text-rose-700 dark:text-rose-200 hidden";
 
   const taskInputContainer = document.getElementById("task-input");
   const header = taskInputContainer?.querySelector("header");
@@ -198,7 +228,11 @@ function validateNewTaskText(rawText) {
   const normalized = normalizeTaskText(rawText);
 
   if (!normalized) {
-    return { ok: false, text: normalized, error: "Escribe una tarea antes de añadirla." };
+    return {
+      ok: false,
+      text: normalized,
+      error: "Escribe una tarea antes de añadirla.",
+    };
   }
 
   if (normalized.length < TASK_TEXT_MIN_LEN) {
@@ -315,7 +349,90 @@ function handleTaskListUrgentClick(event) {
 
 taskListEl.addEventListener("click", handleTaskListUrgentClick);
 
-renderTasks();
+// Inicializa la interfaz con los datos cargados de localStorage (incluye estadísticas)
+persistAndRenderTasks();
+
+// Edición de las tareas ya existentes
+taskListEl.addEventListener("click", (e) => {
+  const editButton = e.target.closest(".edit-button");
+  if (!editButton || !taskListEl.contains(editButton)) return;
+
+  const taskIndex = Number(editButton.dataset.index);
+  if (Number.isNaN(taskIndex)) return;
+
+  const h3 = taskListEl.querySelector(`h3[data-index="${taskIndex}"]`);
+  if (!h3) return;
+
+  const currentText = taskItems[taskIndex].text;
+
+  // Crear input editable
+  const input = document.createElement("input");
+  input.type = "text";
+  input.value = currentText;
+  input.className =
+    "border-b-2 border-rose-400 focus:outline-none w-full bg-transparent text-gray-900 dark:text-gray-100 p-1 rounded-sm transition-colors placeholder-gray-400 dark:placeholder-gray-400";
+
+  // Reemplaza el h3 por el input
+  h3.textContent = "";
+  h3.appendChild(input);
+  input.focus();
+  input.select();
+
+  // Mostrar error inline en caso de duplicado o longitud
+  const showInlineError = (msg) => {
+    const errorEl = ensureInlineErrorEl();
+    if (!msg) {
+      errorEl.textContent = "";
+      errorEl.classList.add("hidden");
+      return;
+    }
+    errorEl.textContent = msg;
+    errorEl.classList.remove("hidden");
+  };
+
+  const saveChanges = () => {
+    const newText = input.value.trim();
+    const normalizedKey = newText.toLowerCase();
+    const isDuplicate = taskItems.some(
+      (t, i) => i !== taskIndex && t.text.toLowerCase() === normalizedKey,
+    );
+
+    if (!newText) {
+      showInlineError("El texto no puede estar vacío.");
+      input.focus();
+      return;
+    }
+    if (newText.length < TASK_TEXT_MIN_LEN) {
+      showInlineError(
+        `La tarea debe tener al menos ${TASK_TEXT_MIN_LEN} caracteres.`,
+      );
+      input.focus();
+      return;
+    }
+    if (newText.length > TASK_TEXT_MAX_LEN) {
+      showInlineError(
+        `La tarea no puede superar ${TASK_TEXT_MAX_LEN} caracteres.`,
+      );
+      input.focus();
+      return;
+    }
+    if (isDuplicate) {
+      showInlineError("Esa tarea ya existe.");
+      input.focus();
+      return;
+    }
+
+    showInlineError(""); // limpiar error
+    taskItems[taskIndex].text = newText;
+    persistAndRenderTasks();
+  };
+
+  input.addEventListener("keydown", (ev) => {
+    if (ev.key === "Enter") saveChanges();
+  });
+
+  input.addEventListener("blur", () => renderTasks());
+});
 
 /**
  * Actualiza la visibilidad de las tarjetas de tareas en función
@@ -329,7 +446,9 @@ function setTaskCardsVisibilityByText(rawQuery) {
   const taskCards = document.querySelectorAll(".task-card");
 
   taskCards.forEach((card) => {
-    const taskText = (card.querySelector("h3")?.textContent ?? "").toLowerCase();
+    const taskText = (
+      card.querySelector("h3")?.textContent ?? ""
+    ).toLowerCase();
     card.style.display = taskText.includes(query) ? "" : "none";
   });
 }
@@ -344,7 +463,9 @@ function applyTaskFilters() {
   const taskCards = document.querySelectorAll(".task-card");
 
   taskCards.forEach((card) => {
-    const taskText = (card.querySelector("h3")?.textContent ?? "").toLowerCase();
+    const taskText = (
+      card.querySelector("h3")?.textContent ?? ""
+    ).toLowerCase();
     const isUrgent = card.dataset.urgent === "true";
 
     const matchesText = taskText.includes(query);
@@ -393,14 +514,17 @@ function handleSortAlphaClick() {
   persistAndRenderTasks();
 }
 
-sortAlphaButtonEl.addEventListener("click", handleSortAlphaClick);
-
+if (sortAlphaButtonEl) {
+  sortAlphaButtonEl.addEventListener("click", handleSortAlphaClick);
+} else {
+  console.warn("sort-alpha button not found");
+}
 
 const darkModeButtonEl = document.getElementById("darkModeButton");
 
 if (localStorage.getItem("theme") === "dark") {
   document.documentElement.classList.add("dark");
-  darkModeButtonEl.textContent = "🌞";
+  darkModeButtonEl.textContent = "☀️";
 } else {
   document.documentElement.classList.remove("dark");
   darkModeButtonEl.textContent = "🌙";
@@ -416,3 +540,23 @@ darkModeButtonEl.addEventListener("click", () => {
     localStorage.setItem("theme", "light");
   }
 });
+
+const markAllCompletedBtn = document.getElementById("mark-all-completed-tasks");
+if (markAllCompletedBtn) {
+  markAllCompletedBtn.addEventListener("click", () => {
+    taskItems = taskItems.map((t) => ({ ...t, completed: true }));
+    persistAndRenderTasks();
+  });
+} else {
+  console.warn("mark-all-completed-tasks button not found");
+}
+
+const clearCompletedBtn = document.getElementById("clear-completed-tasks");
+if (clearCompletedBtn) {
+  clearCompletedBtn.addEventListener("click", () => {
+    taskItems = taskItems.filter((t) => !t.completed);
+    persistAndRenderTasks();
+  });
+} else {
+  console.warn("clear-completed-tasks button not found");
+}
