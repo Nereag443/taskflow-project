@@ -1,9 +1,9 @@
 <!doctype html>
 <html lang="es">
   <head>
-    <meta charset="UTF-8" />
+    <meta charset="UTF-8">
     <title>To Do List App</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
      <link href="./output.css" rel="stylesheet">
   </head>
   <body class="flex flex-col font-sans bg-white dark:bg-gray-900 text-black dark:text-white">
@@ -30,13 +30,8 @@
 
         <div id="task-finder" class="flex justify-between items-center gap-4 flex-wrap">
           <h2 class="text-xl font-semibold">Tareas</h2>
-          <section class="flex items-center gap-2 flex-wrap">
-            <input
-              type="text"
-              id="finder-text"
-              placeholder="Busca una tarea"
-              class="px-2 py-1 rounded border border-gray-300 text-sm"
-            />
+          <div class="flex items-center gap-2 flex-wrap">
+            <input type="text" id="finder-text" placeholder="Busca una tarea" class="px-2 py-1 rounded border border-gray-300 text-sm"/>
             <button
               type="button"
               id="search-task"
@@ -59,18 +54,18 @@
             >
               Ordenar A-Z
             </button>
-          </section>
+          </div>
         </div>
       
         <div id="task-block" class="flex flex-col gap-5 mt-6"></div>
 
-        <section class="h1-contenteditable mt-2.5" id="task-input">
+        <div class="h1-contenteditable mt-2.5" id="task-input">
           <header>
-            <input type="text" id="task-text"placeholder="Añade una tarea" />
+            <input type="text" id="task-text" placeholder="Añade una tarea">
             <button type="button" id="add-task-button" class="px-2 py-1 rounded bg-rose-400 text-white text-sm hover:bg-rose-500 transition dark:bg-gray-700">Aceptar</button >
           </header>
           
-        </section>
+        </div>
       </section>
 
       <script src="app.js"></script>
