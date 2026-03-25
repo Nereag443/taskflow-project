@@ -4,7 +4,8 @@
     <meta charset="UTF-8" />
     <title>To Do List App</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link href="./output.css" rel="stylesheet" />
+    <link href="output.css" rel="stylesheet" />
+    <script src="https://kit.fontawesome.com/da6e9a9ab1.js" crossorigin="anonymous"></script>
   </head>
   <body
     class="flex flex-col font-sans bg-white dark:bg-gray-800 text-black dark:text-white min-h-screen"
@@ -132,7 +133,7 @@
       </aside>
 
       <section
-        class="w-full m-4 p-8 flex flex-col bg-white dark:bg-gray-800"
+        class="screen w-full m-4 p-8 flex flex-col bg-white dark:bg-gray-800"
         id="tareas"
       >
         <div
@@ -151,23 +152,55 @@
               placeholder="🔍 Busca una tarea"
               class="px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-500 text-sm bg-white dark:bg-gray-700"
             />
-            <button type="button" id="search-task"></button>
-            <select
-              id="urgency-filter"
-              class="px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-500 text-sm bg-white dark:bg-gray-700"
+            <div
+              id="task-filters"
+              class="rounded-xl bg-white dark:bg-gray-800 transition-all duration-300"
             >
-              <option value="all">Todas</option>
-              <option value="urgent">Solo urgentes</option>
-              <option value="non-urgent">No urgentes</option>
-            </select>
-            <button
-              type="button"
-              id="sort-alpha"
-              class="px-4 py-2 rounded-lg bg-gray-200 dark:bg-gray-600 text-gray-800 dark:text-white text-sm hover:bg-gray-300 dark:hover:bg-gray-500 transition-all duration-200 shadow-md hover:shadow-lg transform hover:scale-105"
-            >
-              Ordenar A-Z
-            </button>
+              <button
+                type="button"
+                id="toggle-filters"
+                class="w-full text-left px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-500 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-200 font-semibold hover:bg-gray-200 dark:hover:bg-gray-600 transition max-w-[400px]"
+              >
+                Filtrar
+              </button>
+
+              <div id="task-filters-content" class="mt-3 hidden">
+                <button type="button" id="search-task" class="sr-only"></button>
+                <select
+                  id="urgency-filter"
+                  class="px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-500 text-sm bg-white dark:bg-gray-700 w-full"
+                >
+                  <option value="all">Todas</option>
+                  <option value="urgent">Solo urgentes</option>
+                  <option value="non-urgent">No urgentes</option>
+                </select>
+                <select
+                  id="task-filter"
+                  class="px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-500 text-sm bg-white dark:bg-gray-700 w-full"
+                >
+                  <option value="all">Ordenar por:</option>
+                  <option value="alphabetic">A-Z</option>
+                  <option value="alphabetic-reverse">Z-A</option>
+                  <option value="created-newest">
+                    Creación (nuevas primero)
+                  </option>
+                  <option value="created-oldest">
+                    Creación (antiguas primero)
+                  </option>
+                  <option value="completed">Completadas</option>
+                  <option value="pending">Pendientes</option>
+                </select>
+              </div>
+            </div>
           </section>
+        </div>
+
+        <div id="loading" class="hidden text-center text-gray-500">
+          Cargando tareas...
+        </div>
+
+        <div id="error-message" class="hidden text-center text-red-500">
+          Error al cargar las tareas. Por favor, inténtalo de nuevo.
         </div>
 
         <div id="task-block" class="flex flex-col gap-6"></div>
@@ -193,9 +226,112 @@
           </header>
         </section>
       </section>
+      <section id="user" class="screen hidden bg-white dark:bg-gray-800 w-full h-full flex flex-col pt-16">
+        <div class="flex flex-col items-center">
+        <div class="p-4 rounded-full mb-4 mt-6">
+          <img
+            id="avatar"
+            src="avatar1.png"
+            alt="Avatar de usuario"
+            class="w-40 h-40 rounded-full border-4 border-rose-500 dark:border-gray-700 shadow-lg"
+          />
+        </div>
+        <button id="toggle-avatar-options"
+          class="mb-6 px-4 py-2 rounded-lg bg-rose-500 text-white hover:bg-rose-600 transition-all duration-200 shadow-md hover:shadow-lg transform hover:scale-105 dark:bg-gray-700 dark:hover:bg-gray-600"
+          >
+        Cambiar avatar
+        </button>
+        <div id="avatar-options" class="flex gap-4 flex-wrap justify-center hidden">
+          <div class="w-16 h-16 rounded-full bg-gray-300 cursor-pointer border-2 hover:border-rose-500 flex items-center justify-center text-gray-600 font-bold">
+           <img src="avatar1.png" class="avatar-option w-16 h-16 rounded-full cursor-pointer border-2 hover:border-rose-500">
+          </div>
+          <div class="w-16 h-16 rounded-full bg-gray-300 cursor-pointer border-2 hover:border-rose-500 flex items-center justify-center text-gray-600 font-bold">
+           <img src="avatar2.png" class="avatar-option w-16 h-16 rounded-full cursor-pointer border-2 hover:border-rose-500">
+          </div>
+          <div class="w-16 h-16 rounded-full bg-gray-300 cursor-pointer border-2 hover:border-rose-500 flex items-center justify-center text-gray-600 font-bold">
+           <img src="avatar3.png" class="avatar-option w-16 h-16 rounded-full cursor-pointer border-2 hover:border-rose-500">
+          </div>
+          <div class="w-16 h-16 rounded-full bg-gray-300 cursor-pointer border-2 hover:border-rose-500 flex items-center justify-center text-gray-600 font-bold">
+           <img src="avatar4.png" class="avatar-option w-16 h-16 rounded-full cursor-pointer border-2 hover:border-rose-500">
+          </div>
+          <div class="w-16 h-16 rounded-full bg-gray-300 cursor-pointer border-2 hover:border-rose-500 flex items-center justify-center text-gray-600 font-bold">
+           <img src="avatar5.png" class="avatar-option w-16 h-16 rounded-full cursor-pointer border-2 hover:border-rose-500">
+          </div>
+        </div>
+        <div class="flex flex-col items-center gap-4 mt-2 rounded-2xl bg-white dark:bg-gray-700 p-6 shadow-lg">
+          <input 
+          type="text"
+          id="username"
+          placeholder="Nombre de usuario"
+          class="text-xl text-center font-bold dark:text-white cursor-pointer dark:bg-gray-600">
+          </input>
+          <input type="text"
+          id="full-name"
+          placeholder="Nombre y apellidos"
+          class="text-xl text-center font-bold dark:text-white cursor-pointer dark:bg-gray-600">
+          </input>
+          <input 
+          type="email"
+          id="email"
+          placeholder="Correo electrónico"
+          class="text-xl text-center font-bold dark:text-white cursor-pointer dark:bg-gray-600">
+          </input>
+          <input 
+          type="password"
+          id="password"
+          placeholder="Contraseña"
+          class="text-xl text-center font-bold dark:text-white cursor-pointer dark:bg-gray-600">
+          </input>
+          <button class="text-xl text-center font-bold text-rose-700 dark:text-rose-300">
+            Log out
+          </button>
+        </div>
+        </div>
+      </section>
 
-      <script src="app.js"></script>
+      <section
+        id="calendar"
+        class="screen hidden p-8 bg-white dark:bg-gray-800"
+      >
+        <h2 class="text-2xl font-bold text-rose-700 dark:text-rose-300">
+          Calendario
+        </h2>
+        <div
+          id="fullcalendar"
+          class="mt-4 min-h-[400px] bg-white dark:bg-gray-900 rounded-lg p-4"
+        ></div>
+      </section>
+
+      <section
+        id="settings"
+        class="screen hidden p-8 bg-white dark:bg-gray-800"
+      >
+        <h2 class="text-2xl font-bold text-rose-700 dark:text-rose-300">
+          Configuración
+        </h2>
+        <p>Opciones de configuración...</p>
+      </section>
     </main>
-    <footer></footer>
+    <footer class="mt-auto">
+      <div class="social-list flex justify-center gap-6 p-4 bg-gray-100 dark:bg-gray-700">
+        <div class="item">
+          <a href="https://github.com/Nereag443" class="social-link" target="_blank">
+            <i class="fa-brands fa-github" style="font-size: 30px;"></i>
+          </a>
+        </div>
+        <div class="item">
+          <a href="https://discord.com/users/1448373933836337212" class="social-link" target="_blank">
+            <i class="fa-brands fa-discord" style="font-size: 30px;"></i>
+          </a>
+        </div>
+        <div class="item">
+          <a href="mailto:garciamolinero.nerea@gmail.com" class="social-link" target="_blank">
+            <i class="fa-solid fa-at" style="font-size: 30px;"></i>
+          </a>
+        </div>
+      </div>
+    </footer>
+    <script src="./api/client.js"></script>
+    <script type="module" src="app.js"></script>
   </body>
 </html>

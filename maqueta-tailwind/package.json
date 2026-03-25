@@ -7,5 +7,10 @@
   "scripts": {
     "build": "tailwindcss -i ./src/style.css -o ./public/output.css",
     "dev": "tailwindcss -i ./src/style.css -o ./public/output.css --watch"
+  },
+  "dependencies": {
+    "@fullcalendar/core": "^6.1.20",
+    "@fullcalendar/daygrid": "^6.1.20",
+    "@fullcalendar/interaction": "^6.1.20"
   }
 }

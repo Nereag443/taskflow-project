@@ -1,12 +1,101 @@
+let userAvatar = "avatar1.png"; // Valor por defecto del avatar
+let darkMode = false;
+let userData = {
+  username: "",
+  fullName: "",
+  email: "",
+  password: "",
+};
 const taskListEl = document.getElementById("task-block");
 const taskInputEl = document.getElementById("task-text");
 const addTaskButtonEl = document.getElementById("add-task-button");
+const avatar = document.getElementById("avatar");
+const avatarOptions = document.querySelectorAll(".avatar-option");
+const usernameInput = document.getElementById("username");
+const fullNameInput = document.getElementById("full-name");
+const emailInput = document.getElementById("email");
+const passwordInput = document.getElementById("password"); 
 const searchInputEl = document.getElementById("finder-text");
 const searchButtonEl = document.getElementById("search-task");
 const urgencyFilterEl = document.getElementById("urgency-filter");
-const sortAlphaButtonEl = document.getElementById("sort-alpha");
+const taskFilterEl = document.getElementById("task-filter");
+const toggleFiltersButtonEl = document.getElementById("toggle-filters");
+const taskFiltersContentEl = document.getElementById("task-filters-content");
+const loadingEl = document.getElementById("loading");
+const errorMessageEl = document.getElementById("error-message");
 
-const TASKS_STORAGE_KEY = "tasks";
+async function getUserPreferences() {
+  try {
+    const response = await fetch(`${API_BASE}/api/v1/user/preferences`);
+    if (!response.ok) {
+      throw new Error("Failed to fetch user preferences");
+    }
+    return await response.json();
+  } catch (error) {
+    console.error("Error fetching user preferences:", error);
+    return { theme: "light", userAvatar: "avatar1.png" };
+  }
+}
+
+async function updateUserPreferences(preferences) {
+  try {
+    await fetch(`${API_BASE}/api/v1/user/preferences`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(preferences),
+    });
+  } catch (error) {
+    console.error("Error updating user preferences:", error);
+  }
+}
+
+
+
+function showLoading(show) {
+  if (loadingEl) {
+    loadingEl.classList.toggle("hidden", !show);
+  }
+}
+
+function showErrorMessage(show) {
+  if (errorMessageEl) {
+    errorMessageEl.classList.toggle("hidden", !show);
+  }
+}
+
+function hideError() {
+  showErrorMessage(false);
+}
+
+// Seleccionamos todos los enlaces del aside
+const navItems = document.querySelectorAll('aside ul li');
+
+navItems.forEach(li => {
+  li.addEventListener('click', e => {
+    e.preventDefault();
+
+    const link = li.querySelector('a'); // obtenemos el <a> dentro del li
+    if (!link) return;
+
+    const targetId = link.getAttribute('href').substring(1);
+
+    // Ocultar todas las secciones
+    document.querySelectorAll('.screen').forEach(screen => screen.classList.add('hidden'));
+
+    // Mostrar la sección correspondiente
+    const targetScreen = document.getElementById(targetId);
+    if (targetScreen) targetScreen.classList.remove('hidden');
+
+    // Resaltar el enlace activo
+    navItems.forEach(l => l.classList.remove('bg-rose-300', 'dark:bg-gray-500'));
+    li.classList.add('bg-rose-300', 'dark:bg-gray-500');
+  });
+});
+
+let currentSortFilter = "all";
+
 const TASK_TEXT_MIN_LEN = 2;
 const TASK_TEXT_MAX_LEN = 80;
 const TASKS_MAX_COUNT = 100;
@@ -48,25 +137,7 @@ function escapeHtml(unsafe) {
  * @returns {{ text: string; completed: boolean; urgent: boolean; createdAt?: string | null }[]} Lista de tareas normalizadas.
  */
 
-function loadTasks() {
-  try {
-    const parsed = JSON.parse(localStorage.getItem(TASKS_STORAGE_KEY));
-    if (!Array.isArray(parsed)) return [];
-
-    return parsed
-      .map((t) => ({
-        text: normalizeTaskText(t?.text),
-        completed: Boolean(t?.completed),
-        urgent: Boolean(t?.urgent),
-        createdAt: typeof t?.createdAt === "string" ? t.createdAt : null,
-      }))
-      .filter((t) => t.text.length > 0);
-  } catch {
-    return [];
-  }
-}
-
-let taskItems = loadTasks();
+let taskItems = [];
 let currentTextFilter = "";
 let currentUrgencyFilter = "all";
 
@@ -150,6 +221,26 @@ function renderTasks() {
   applyTaskFilters();
 }
 
+async function loadTasksFromApi() {
+  showLoading(true);
+  hideError();
+  try {
+    const response = await fetch(`${API_BASE}/api/v1/tasks`);
+    if (!response.ok) throw new Error("Failed to fetch tasks from API");
+    
+    const tasksFromApi = await response.json();
+    taskItems = tasksFromApi;
+    renderTasks();
+    updateStats();
+  } catch (error) {
+    console.error("Error loading tasks from API:", error);
+    showErrorMessage(true);
+  } finally {
+    showLoading(false);
+  }
+}
+
+
 function updateStats() {
   const total = taskItems.length;
   const completed = taskItems.filter((t) => t.completed).length;
@@ -160,23 +251,6 @@ function updateStats() {
   document.getElementById("pending-tasks").textContent = pending;
 }
 
-/**
- * Convierte el array `taskItems` a JSON y lo guarda en localStorage.
- */
-
-function persistTasks() {
-  localStorage.setItem(TASKS_STORAGE_KEY, JSON.stringify(taskItems));
-}
-
-/**
- * Guarda las tareas en localStorage y vuelve a renderizar la lista.
- */
-
-function persistAndRenderTasks() {
-  persistTasks();
-  renderTasks();
-  updateStats();
-}
 
 /**
  * Asegura que exista un elemento de error inline para el input de tareas
@@ -270,7 +344,7 @@ function validateNewTaskText(rawText) {
   return { ok: true, text: normalized, error: "" };
 }
 
-addTaskButtonEl.addEventListener("click", () => {
+addTaskButtonEl.addEventListener("click", async () => {
   const validation = validateNewTaskText(taskInputEl.value);
   if (!validation.ok) {
     setTaskError(validation.error);
@@ -278,14 +352,22 @@ addTaskButtonEl.addEventListener("click", () => {
   }
 
   setTaskError("");
-  taskItems.push({
-    text: validation.text,
-    completed: false,
-    urgent: false,
-    createdAt: new Date().toISOString(),
-  });
+  try {
+    const newTask = {
+      text: validation.text,
+      completed: false,
+      urgent: false,
+      createdAt: new Date().toISOString(),
+    };
+    const createdTask = await createTask(newTask) || {...newTask, id: Date.now()}; // Fallback con ID temporal si la API no responde con el nuevo objeto
+    taskItems.push(createdTask);
+  } catch (error) {
+    console.error("Error adding task:", error);
+  }
+
   taskInputEl.value = "";
-  persistAndRenderTasks();
+  renderTasks();
+  updateStats();
 });
 
 // Añadir tareas con enter
@@ -303,7 +385,8 @@ taskListEl.addEventListener("change", (e) => {
   if (e.target.classList.contains("check")) {
     const taskIndex = Number(e.target.dataset.index);
     taskItems[taskIndex].completed = e.target.checked;
-    persistAndRenderTasks();
+    renderTasks();
+    updateStats();
   }
 });
 
@@ -323,8 +406,16 @@ function handleTaskListDeleteClick(event) {
   const taskIndex = Number(deleteButton.dataset.index);
   if (Number.isNaN(taskIndex)) return;
 
-  taskItems.splice(taskIndex, 1);
-  persistAndRenderTasks();
+  try {
+    const [removed] = taskItems.splice(taskIndex, 1);
+    deleteTask(removed.id).catch((error) => {
+      console.error("Error deleting task:", error);
+    });
+    renderTasks();
+    updateStats();
+  } catch (error) {
+    console.error("Error deleting task:", error);
+  }
 }
 
 taskListEl.addEventListener("click", handleTaskListDeleteClick);
@@ -344,13 +435,15 @@ function handleTaskListUrgentClick(event) {
   if (Number.isNaN(taskIndex)) return;
 
   taskItems[taskIndex].urgent = !taskItems[taskIndex].urgent;
-  persistAndRenderTasks();
+  renderTasks();
+  updateStats();
 }
 
 taskListEl.addEventListener("click", handleTaskListUrgentClick);
 
 // Inicializa la interfaz con los datos cargados de localStorage (incluye estadísticas)
-persistAndRenderTasks();
+renderTasks();
+updateStats();
 
 // Edición de las tareas ya existentes
 taskListEl.addEventListener("click", (e) => {
@@ -424,7 +517,8 @@ taskListEl.addEventListener("click", (e) => {
 
     showInlineError(""); // limpiar error
     taskItems[taskIndex].text = newText;
-    persistAndRenderTasks();
+    renderTasks();
+    updateStats();
   };
 
   input.addEventListener("keydown", (ev) => {
@@ -460,6 +554,7 @@ function setTaskCardsVisibilityByText(rawQuery) {
 function applyTaskFilters() {
   const query = normalizeTaskText(currentTextFilter).toLowerCase();
   const urgency = currentUrgencyFilter;
+  const status = currentSortFilter; // completed/pending/all
   const taskCards = document.querySelectorAll(".task-card");
 
   taskCards.forEach((card) => {
@@ -467,9 +562,13 @@ function applyTaskFilters() {
       card.querySelector("h3")?.textContent ?? ""
     ).toLowerCase();
     const isUrgent = card.dataset.urgent === "true";
+    const taskIndex = Number(card.querySelector(".check")?.dataset.index);
+    const task = Number.isNaN(taskIndex) ? null : taskItems[taskIndex];
+    const isCompleted = task ? task.completed : false;
 
     const matchesText = taskText.includes(query);
     let matchesUrgency = true;
+    let matchesStatus = true;
 
     if (urgency === "urgent") {
       matchesUrgency = isUrgent;
@@ -477,7 +576,13 @@ function applyTaskFilters() {
       matchesUrgency = !isUrgent;
     }
 
-    card.style.display = matchesText && matchesUrgency ? "" : "none";
+    if (status === "completed") {
+      matchesStatus = isCompleted;
+    } else if (status === "pending") {
+      matchesStatus = !isCompleted;
+    }
+
+    card.style.display = matchesText && matchesUrgency && matchesStatus ? "" : "none";
   });
 }
 
@@ -505,47 +610,74 @@ function handleUrgencyFilterChange() {
 urgencyFilterEl.addEventListener("change", handleUrgencyFilterChange);
 
 /**
- * Ordena las tareas alfabéticamente por su texto y las persiste.
+ * Ordena `taskItems` según la opción seleccionada en el desplegable.
  */
-function handleSortAlphaClick() {
-  taskItems.sort((a, b) =>
-    a.text.localeCompare(b.text, "es", { sensitivity: "base" }),
-  );
-  persistAndRenderTasks();
+function applyTaskSorting() {
+  switch (currentSortFilter) {
+    case "alphabetic":
+      taskItems.sort((a, b) => a.text.localeCompare(b.text, "es", { sensitivity: "base" }));
+      break;
+    case "alphabetic-reverse":
+      taskItems.sort((a, b) => b.text.localeCompare(a.text, "es", { sensitivity: "base" }));
+      break;
+    case "created-newest":
+      taskItems.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+      break;
+    case "created-oldest":
+      taskItems.sort((a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime());
+      break;
+    case "completed":
+    case "pending":
+    case "all":
+    default:
+      // No reordenamos para estas opciones, solo filtrar en visibilidad.
+      break;
+  }
 }
 
-if (sortAlphaButtonEl) {
-  sortAlphaButtonEl.addEventListener("click", handleSortAlphaClick);
+function handleTaskFilterChange() {
+  currentSortFilter = taskFilterEl.value;
+  applyTaskSorting();
+  renderTasks();
+  updateStats();
+}
+
+if (taskFilterEl) {
+  taskFilterEl.addEventListener("change", handleTaskFilterChange);
 } else {
-  console.warn("sort-alpha button not found");
+  console.warn("task-filter select not found");
+}
+
+if (toggleFiltersButtonEl && taskFiltersContentEl) {
+  toggleFiltersButtonEl.addEventListener("click", () => {
+    taskFiltersContentEl.classList.toggle("hidden");
+    toggleFiltersButtonEl.textContent = taskFiltersContentEl.classList.contains("hidden")
+      ? "Filtrar"
+      : "Ocultar filtros";
+  });
+} else {
+  console.warn("toggle-filters button or task-filters-content container not found");
 }
 
 const darkModeButtonEl = document.getElementById("darkModeButton");
 
-if (localStorage.getItem("theme") === "dark") {
-  document.documentElement.classList.add("dark");
-  darkModeButtonEl.textContent = "☀️";
-} else {
-  document.documentElement.classList.remove("dark");
-  darkModeButtonEl.textContent = "🌙";
-}
+if (darkModeButtonEl) {
+  darkModeButtonEl.addEventListener("click", async () => {
+  darkMode = !darkMode;
 
-darkModeButtonEl.addEventListener("click", () => {
-  document.documentElement.classList.toggle("dark");
-  if (document.documentElement.classList.contains("dark")) {
-    darkModeButtonEl.textContent = "☀️";
-    localStorage.setItem("theme", "dark");
-  } else {
-    darkModeButtonEl.textContent = "🌙";
-    localStorage.setItem("theme", "light");
-  }
-});
+  document.documentElement.classList.toggle("dark", darkMode);
+  userData.theme = darkMode ? "dark" : "light";
+  darkModeButtonEl.textContent = darkMode ? "☀️" : "🌙";
+  await updateUserPreferences({ theme: darkMode ? "dark" : "light" });
+} );
+}
 
 const markAllCompletedBtn = document.getElementById("mark-all-completed-tasks");
 if (markAllCompletedBtn) {
   markAllCompletedBtn.addEventListener("click", () => {
     taskItems = taskItems.map((t) => ({ ...t, completed: true }));
-    persistAndRenderTasks();
+    renderTasks();
+    updateStats();
   });
 } else {
   console.warn("mark-all-completed-tasks button not found");
@@ -555,8 +687,80 @@ const clearCompletedBtn = document.getElementById("clear-completed-tasks");
 if (clearCompletedBtn) {
   clearCompletedBtn.addEventListener("click", () => {
     taskItems = taskItems.filter((t) => !t.completed);
-    persistAndRenderTasks();
+    renderTasks();
+    updateStats();
   });
 } else {
   console.warn("clear-completed-tasks button not found");
 }
+
+avatarOptions.forEach((option) => {
+  option.addEventListener("click", async () => {
+    userData.userAvatar = option.src;
+    avatar.src = option.src;
+    await updateUserPreferences(userData);
+  });
+});
+
+
+const toggleAvatarBtn = document.getElementById("toggle-avatar-options");
+const avatarOptionsContainer = document.getElementById("avatar-options");
+
+if (toggleAvatarBtn && avatarOptionsContainer) {
+  toggleAvatarBtn.addEventListener("click", () => {
+    avatarOptionsContainer.classList.toggle("hidden");
+  });
+}
+
+if (usernameInput) {
+  usernameInput.addEventListener("input", async () => {
+    userData.username = usernameInput.value;
+    await updateUserPreferences({ username: usernameInput.value });
+  });
+}
+
+if (fullNameInput) {
+  fullNameInput.addEventListener("input", async () => {
+    userData.fullName = fullNameInput.value;
+    await updateUserPreferences({ fullName: fullNameInput.value });
+  });
+}
+if (emailInput) {
+  emailInput.addEventListener("input", async () => {
+    userData.email = emailInput.value;
+    await updateUserPreferences({ email: emailInput.value });
+  });
+}
+if (passwordInput) {
+  passwordInput.addEventListener("input", async () => {
+    userData.password = passwordInput.value;
+    await updateUserPreferences({ password: passwordInput.value });
+  });
+}
+
+document.addEventListener("DOMContentLoaded", async () => {
+  const preferences = await getUserPreferences();
+  userData = {
+    username: preferences.username || "",
+    fullName: preferences.fullName || "",
+    email: preferences.email || "",
+    password: preferences.password || "",
+  };
+  if (preferences.theme === "dark") {
+    document.documentElement.classList.add("dark");
+    if (darkModeButtonEl) {
+      darkModeButtonEl.textContent = "☀️";
+    }
+  }
+  if (preferences.userAvatar && avatar) {
+    avatar.src = preferences.userAvatar;
+  }
+  if (usernameInput) usernameInput.value = userData.username || "";
+  if (fullNameInput) fullNameInput.value = userData.fullName || "";
+  if (emailInput) emailInput.value = userData.email || "";
+  if (passwordInput) passwordInput.value = userData.password || "";
+
+  renderTasks();
+  updateStats();
+  await loadTasksFromApi();
+});
