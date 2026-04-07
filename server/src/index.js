@@ -1,6 +1,8 @@
 const express = require('express')
 const cors = require('cors')
 const path = require('path')
+const swaggerUi = require ('swagger-ui-express')
+const swaggerSpec = require ('./config/swagger')
 
 const app = express()
 
@@ -14,6 +16,8 @@ app.use(express.json())
 
 app.use('/api/v1/tasks', taskRoutes)
 app.use('/api/v1/user/preferences', userPreferencesRoutes)
+
+app.use('/api/docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec))
 
 app.use(express.static(path.join(__dirname, '../../maqueta-tailwind/public')))
 
