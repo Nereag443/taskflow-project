@@ -116,7 +116,7 @@ Obtener todas las tareas:
 GET /api/v1/tasks
 
 Respuesta:
-
+```json
 [
   {
     "id": 1,
@@ -125,25 +125,25 @@ Respuesta:
     "urgent": false
   }
 ]
-
+```
 Crear una tarea:
 POST /api/v1/tasks
 
 Body:
-
+```json
 {
   "text": "Estudiar Node"
 }
-
+```
 Respuesta:
-
+```json
 {
   "id": 2,
   "text": "Estudiar Node",
   "completed": false,
   "urgent": false
 }
-
+```
 Eliminar tarea:
 DELETE /api/v1/tasks/:id
 
@@ -159,25 +159,25 @@ Obtener preferencias:
 GET /api/v1/user/preferences
 
 Respuesta:
-
+```json
 {
   "theme": "light",
   "userAvatar": "avatar1.png"
 }
-
+```
 Actualizar preferencias:
 
 POST /api/v1/user/preferences
 
 Body:
-
+```json
 {
   "theme": "dark",
   "avatar": "avatar2.png"
 }
-
+```
 Respuesta:
-
+```json
 {
   "message": "Preferences updated",
   "preferences": {
@@ -185,7 +185,7 @@ Respuesta:
     "avatar": "avatar2.png"
   }
 }
-
+```
 
 ---
 ### Manejo de errores
@@ -202,31 +202,31 @@ Body inválido:
 {}
 
 Respuesta:
-
+```json
 {
   "error": "El texto de la tarea es obligatorio"
 }
-
+```
 🔴 404 - Not Found -> Recurso inexistente
 
 GET /api/v1/tasks/999
 
 Respuesta:
-
+```json 
 {
   "error": "Recurso no encontrado"
 }
-
+```
 🔴 500 - Internal Server Error -> Error inesperado en el servidor
 
 GET /api/v1/tasks/999
 
 Respuesta:
-
+```json
 {
   "error": "Error interno del servidor"
 }
-
+```
 ### Testing Postman
 
 Se han probado los endpoints con: 
