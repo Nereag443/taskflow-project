@@ -11,6 +11,7 @@ La estructura del proyecto sigue una organización modular para separar responsa
 
 Request -> Route -> Controller -> Service -> Response
 
+```bash
 server 
 │ 
 ├── src 
@@ -36,7 +37,7 @@ server
 ├── .gitignore 
 ├── package.json 
 └── package-lock.json
-
+```
 
 ---
 #### Descipción de carpetas
@@ -82,17 +83,21 @@ Responsabilidades:
  - Nodemon (hot reload en desarrollo)
  - Swagger (swagger-ui-express, swagger-jsdoc)
 
-
+---
  ### Instalación
   1. Clonar el repositorio:
+  ```bash
     git clone <https://github.com/Nereag443/taskflow-project.git>
     cd server
-
+  ```
   2. Instalar dependencias:
+  ```bash
     npm install
-
+  ```
   3. Ejecutar el servidor:
+  ```bash
     npm run dev
+  ```
 
 Servidor por defecto en: http://localhost:3000
 
@@ -182,6 +187,7 @@ Respuesta:
 }
 
 
+---
 ### Manejo de errores
 La API implementa in middleware global de errores que normaliza las respuestas HTTP.
 
@@ -245,7 +251,7 @@ Permite:
 
  ---
 ### Middleware global de errores
-
+```js
 app.use((err, req, res, next) => {
   if (err.message === "NOT_FOUND") {
     return res.status(404).json({
@@ -257,7 +263,7 @@ app.use((err, req, res, next) => {
     error: "Error interno del servidor"
   });
 });
-
+```
 
 ---
 ### Notas
