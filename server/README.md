@@ -39,8 +39,8 @@ server
 └── package-lock.json
 ```
 
----
-#### Descipción de carpetas
+
+### Descipción de carpetas
 **config**  
 Configuración global del servidor.
 `env.js`: carga las variables de entorno mediante `dotenv`
