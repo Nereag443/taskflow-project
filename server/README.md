@@ -1,7 +1,7 @@
 ## Taskflow Project API
 
-Este proyecto implementa una API REST desarrollada con Node.js y Express que permite gestionar tareas.
-La aplicación sigue una arquitectura por capas, separando responsabilidades entre rutas, controladores, servicios y middleware de errores para mantener un código limpio, mantenible y escalable.
+Este proyecto implementa una API REST desarrollada con Node.js y Express que permite gestionar tareas.  
+La aplicación sigue una arquitectura por capas, separando responsabilidades entre rutas, controladores, servicios y middleware de errores para mantener un código limpio, mantenible y escalable.  
 Actualmente la persistencia se simula mediante un array en memoria, por lo que la API no persiste.
 
 ---
@@ -41,11 +41,11 @@ server
 
 ---
 #### Descipción de carpetas
-**config**
+**config**  
 Configuración global del servidor.
 `env.js`: carga las variables de entorno mediante `dotenv`
 
-**controllers**
+**controllers**  
 Los controladores gestionan las peticiones HTTP.
 Responsabilidades:
  - Recibir solicitudes de clientes
@@ -53,17 +53,17 @@ Responsabilidades:
  - Invocar la lógica del servicio
  - Enviar respuestas HTTP adecuadas
 
-**services**
+**services**  
 Contiene la lógica de negocio de la aplicación.
 Responsabilidades: 
  - Manipular datos
  - Gestionar tareas
  - Lanzar errores cuando ocurre un problema de dominio
 
-**routes**
+**routes**  
 Define los endpoints de la API y conecta cada ruta con su controlador correspondiente.
 
-**index.js**
+**index.js**  
 Es el punto de entrada del servidor.
 
 Responsabilidades:
@@ -110,7 +110,7 @@ http://localhost:3000/api/v1
 ---
 ### Endpoints principales
 
-**Tareas**
+**Tareas**  
 Obtener todas las tareas:
 
 GET /api/v1/tasks
@@ -267,5 +267,5 @@ app.use((err, req, res, next) => {
 
 ---
 ### Notas
-No hay autenticación implementada (req.user no disponible)
+No hay autenticación implementada (req.user no disponible)  
 Persistencia en memoria (no base de datos)
