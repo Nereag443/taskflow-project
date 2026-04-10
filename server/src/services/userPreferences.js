@@ -12,8 +12,8 @@ function getUserPreferences() {
 }
 
 function updateUserPreferences(data) {
-    if (data.darkMode !== undefined) userPreferences.darkMode = data.darkMode;
-    if (data.avatar !== undefined) userPreferences.avatar = data.avatar;
+    if (data.theme !== undefined) userPreferences.theme = data.theme;
+    if (data.userAvatar !== undefined) userPreferences.userAvatar = data.userAvatar;
     return userPreferences;
 }
 
