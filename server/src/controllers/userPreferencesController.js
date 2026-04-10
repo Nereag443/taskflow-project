@@ -11,7 +11,8 @@ const getUserPreferences = async (req, res) => {
 
 const updateUserPreferences = async (req, res) => {
   try {
-    const updated = updateUserPreferences(req.body)
+    const { darkMode, avatar } = req.body
+    const updated = updateUserPreferences(darkMode, avatar)
     res.json(updated)
   } catch (error) {
     console.error("Error updating user preferences:", error)
