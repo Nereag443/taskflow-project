@@ -3,7 +3,7 @@ const {getUserPreferences: getUserPreferencesService, updateUserPreferences: upd
 const getUserPreferences = async (req, res) => {
     try {
     res.json(getUserPreferencesService());
-    } catch (error) {
+    } catch (error) { 
         console.error("Error fetching user preferences:", error);
         res.status(500).json({ error: "Failed to fetch user preferences" });
     }
