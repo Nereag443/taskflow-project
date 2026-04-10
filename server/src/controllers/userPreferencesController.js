@@ -1,8 +1,8 @@
-const { getUserPreferences, updateUserPreferences} = require('../services/userPreferences')
+const { getUserPreferences: getUserPreferencesService, updateUserPreferences: updateUserPreferencesService } = require('../services/userPreferences')
 
 const getUserPreferences = async (req, res) => {
   try {
-    res.json(getUserPreferences())
+    res.json(getUserPreferencesService())
   } catch (error) {
     console.error("Error fetching user preferences:", error)
     res.status(500).json({ error: "Failed to fetch user preferences" })
@@ -12,7 +12,7 @@ const getUserPreferences = async (req, res) => {
 const updateUserPreferences = async (req, res) => {
   try {
     const { darkMode, avatar } = req.body
-    const updated = updateUserPreferences(darkMode, avatar)
+    const updated = updateUserPreferencesService(darkMode, avatar)
     res.json(updated)
   } catch (error) {
     console.error("Error updating user preferences:", error)
