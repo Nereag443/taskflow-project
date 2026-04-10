@@ -2,7 +2,7 @@
   "version": 2,
   "builds": [
     {
-      "src": "maqueta-tailwind/public/index.html",
+      "src": "maqueta-tailwind/public/**",
       "use": "@vercel/static"
     },
     {
