@@ -5,7 +5,6 @@ const swaggerUi = require ('swagger-ui-express')
 const swaggerSpec = require ('./config/swagger')
 
 const app = express()
-
 const { port } = require('./config/env')
 
 const taskRoutes = require('./routes/task.routes')
