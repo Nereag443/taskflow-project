@@ -2,6 +2,7 @@
   "name": "maqueta-tailwind",
   "version": "1.0.0",
   "scripts": {
+    "build": "cd maqueta-tailwind && npm install && npm run build",
     "dev": "nodemon server/src/index.js"
   },
   "dependencies": {
