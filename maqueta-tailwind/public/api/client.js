@@ -34,7 +34,7 @@ async function createTask(task) {
 
 async function deleteTask(id) {
   try {
-    const response = await fetch(`${API_URL}/api/v1/tasks/${id}`, {
+    const response = await fetch(`${API_BASE}/api/v1/tasks/${id}`, {
       method: "DELETE",
       headers: {
         "Content-Type": "application/json",

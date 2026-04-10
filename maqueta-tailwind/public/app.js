@@ -183,7 +183,7 @@ function renderTasks() {
 </label>
         <header class="flex flex-col w-full">
         <div class="flex items-center justify-between w-full">
-          <h3 class="text-lg font-medium flex-1 ${task.completed ? "line-through text-gray-400" : ""}" data-index="${taskIndex}">${escapeHtml(task.text)}
+          <h3 class="text-lg font-medium flex-1 ${task.completed ? "line-through text-gray-400" : ""}" data-index="${taskIndex}">${escapeHtml(task.title)}
           </h3>
           <button 
       type="button" 
@@ -335,7 +335,7 @@ function validateNewTaskText(rawText) {
 
   const normalizedKey = normalized.toLowerCase();
   const isDuplicate = taskItems.some(
-    (t) => normalizeTaskText(t.text).toLowerCase() === normalizedKey,
+    (t) => normalizeTaskText(t.title).toLowerCase() === normalizedKey,
   );
   if (isDuplicate) {
     return { ok: false, text: normalized, error: "Esa tarea ya existe." };
@@ -354,7 +354,7 @@ addTaskButtonEl.addEventListener("click", async () => {
   setTaskError("");
   try {
     const newTask = {
-      text: validation.text,
+      title: validation.text,
       completed: false,
       urgent: false,
       createdAt: new Date().toISOString(),
@@ -456,7 +456,7 @@ taskListEl.addEventListener("click", (e) => {
   const h3 = taskListEl.querySelector(`h3[data-index="${taskIndex}"]`);
   if (!h3) return;
 
-  const currentText = taskItems[taskIndex].text;
+  const currentText = taskItems[taskIndex].title;
 
   // Crear input editable
   const input = document.createElement("input");
@@ -516,7 +516,7 @@ taskListEl.addEventListener("click", (e) => {
     }
 
     showInlineError(""); // limpiar error
-    taskItems[taskIndex].text = newText;
+    taskItems[taskIndex].title = newText;
     renderTasks();
     updateStats();
   };
