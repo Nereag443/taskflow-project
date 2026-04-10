@@ -1,4 +1,4 @@
-const { obtenerPreferencias, actualizarPreferencias } = require('../service/userPreferences')
+const { obtenerPreferencias, actualizarPreferencias } = require('../services/userPreferences')
 
 const getUserPreferences = async (req, res) => {
   try {
