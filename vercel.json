@@ -1,6 +1,5 @@
 {
   "version": 2,
-  "name": "maqueta-tailwind",
   "builds": [
     {
       "src": "maqueta-tailwind/public/**",
@@ -11,14 +10,10 @@
       "use": "@vercel/node"
     }
   ],
-  "routes": [
+  "rewrites": [
     {
-      "src": "/api/(.*)",
-      "dest": "server/src/index.js"
-    },
-    {
-      "src": "/(.*)",
-      "dest": "maqueta-tailwind/public/$1"
+      "source": "/api/:path*",
+      "destination": "/server/src/index.js"
     }
   ]
 }
