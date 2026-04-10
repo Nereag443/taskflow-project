@@ -18,8 +18,3 @@ const updateUserPreferences = async (req, res) => {
         res.status(500).json({ error: "Failed to update user preferences" });
     }
 }
-
-module.exports = {
-    getUserPreferences,
-    updateUserPreferences
-};
