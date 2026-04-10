@@ -1,6 +1,10 @@
 let userPreferences = {
-    darkMode: false,
-    avatar: null,
+    theme: "light",
+    userAvatar: "avatar1.png",
+    username: "",
+    fullName: "",
+    email: "",
+    password: "",
 };
 
 function getUserPreferences() {
